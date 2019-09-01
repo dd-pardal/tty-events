@@ -55,7 +55,7 @@ An uppercase letter emits an event with the uppercase letter and with the `shift
 
 ### Meta Modifier
 
-The `Meta` modifier might not be correspond to the <kbd>Meta</kbd>, <kbd>⌘</kbd> or <kbd>Windows</kbd> keys. It's usually <kbd>Alt</kbd>.
+The `Meta` modifier might not be correspond to the <kbd>Meta</kbd> or <kbd>Windows</kbd> keys. It's usually <kbd>Alt</kbd>.
 
 ### "Twin" Keys
 

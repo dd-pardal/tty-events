@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "no tnx"
+    "url": "git://github.com/dd-pardal/tty-input.git"
   },
   "keywords": [
     "tty",

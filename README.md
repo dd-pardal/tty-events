@@ -11,7 +11,7 @@ Here's a simple logger:
 if (process.stdin.isTTY)
 	process.stdin.setRawMode(true);
 
-const te = new (require("./index.js"));
+const te = new (require("tty-input"));
 
 te.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {

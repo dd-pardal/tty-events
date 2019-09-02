@@ -4,7 +4,7 @@
   "description": "A package for handling terminal input (mouse, keyboard and clipboard).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,8 @@
     "keypress",
     "mouse",
     "clipboard",
-    "paste"
+	"paste",
+	"unicode"
   ],
   "author": "dd.pardal",
   "license": "MIT"

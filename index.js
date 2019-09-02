@@ -413,7 +413,7 @@ function* emitKeys(terminal) {
 				}
 
 			// Parse the key itself
-			if (code.match(/(O|\[)[A-Z]/)) {
+			if (code.match(/^(O|\[)[A-Z]$/)) {
 				// ESC O letter and ESC [ letter are equivalent for uppercase.
 
 				switch (code[1]) {

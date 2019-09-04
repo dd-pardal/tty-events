@@ -7,7 +7,7 @@ _tty-input_ is a fast library for handling input (keyboard, mouse and bracketed 
 - Full UTF-8 support;
 - Keys always have objects;
 - Easy comparation (`key == "Ctrl+s"`);
-- Support for <kbd>Ctrl</kbd>+<kbd>@</kbd>, <kbd>Ctrl</kbd>+<kbd>[</kbd>, <kbd>Ctrl</kbd>+<kbd>\\</kbd>, <kbd>Ctrl</kbd>+<kbd>]</kbd>, <kbd>Ctrl</kbd>+<kbd>^</kbd> and <kbd>Ctrl</kbd>+<kbd>-</kbd>;
+- Support for <kbd>Ctrl</kbd>+<kbd>@</kbd>, <kbd>Ctrl</kbd>+<kbd>\\</kbd>, <kbd>Ctrl</kbd>+<kbd>]</kbd>, <kbd>Ctrl</kbd>+<kbd>^</kbd> and <kbd>Ctrl</kbd>+<kbd>-</kbd>;
 - Key combos with special/function keys (especially in Windows);
 - No need for `tty.setRawMode(true)`;
 - `unknownSequence` event.

@@ -1,5 +1,9 @@
 /* This is the test script for tty-input */
 
+const Terminal = require("./index.js"),
+stream = require("stream"),
+assert = require("assert");
+
 const tests = [
 	{
 		name: "Char a",
@@ -266,10 +270,6 @@ const tests = [
 ];
 
 // Actual code //
-
-const Terminal = require("./index.js"),
-stream = require("stream"),
-assert = require("assert");
 
 var passedTests = 0,
 failedTests = 0;

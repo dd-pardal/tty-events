@@ -16,9 +16,12 @@
     "keypress",
     "mouse",
     "clipboard",
-	"paste",
-	"unicode"
+    "paste",
+    "unicode"
   ],
   "author": "dd.pardal",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jsdoc-to-markdown": "^5.0.1"
+  }
 }

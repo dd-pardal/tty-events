@@ -1,7 +1,12 @@
+/**
+ * @module tty-input
+ */
+
 const EventEmitter = require("events");
 
 /**
  * Represents a keyboard event (key or key combination).
+ * @alias module:tty-input.KeyboardEvent
  */
 class KeyboardEvent {
 	constructor(
@@ -18,7 +23,7 @@ class KeyboardEvent {
 			throw new TypeError();
 
 		/**
-		 * The name (for special keys) or character produced by the key.
+		 * The key name (for special keys) or character produced by the key.
 		 * @type {string}
 		 */
 		this.name = name;
@@ -42,8 +47,7 @@ class KeyboardEvent {
 		this.ctrl = ctrl;
 
 		/**
-		 * Determines if the alt modifier was being pressed with the key. If the key is not a special key, this is always `false`.
-		 * Note that most terminal emulators will not interpret key combinations with the alt key.
+		 * Determines if the Alt modifier was being pressed with the key.
 		 * @type {boolean}
 		 */
 		this.alt = alt;
@@ -76,10 +80,59 @@ class KeyboardEvent {
 
 /**
  * Represents a mouse event (click, wheel, etc.).
+ * @alias module:tty-input.MouseEvent
  */
 class MouseEvent {
-	constructor(evOpts) {
-		Object.assign(this, evOpts);
+	constructor({
+		x,
+		y,
+		button,
+		ctrl,
+		alt,
+		shift,
+		type
+	}) {
+		/**
+		 * The x coordinate of where the mouse event happened. (1 = leftmost column.)
+		 * @type {number}
+		 */
+		this.x = x;
+
+		/**
+		 * The y coordinate of where the mouse event happened. (1 = topmost row.)
+		 * @type {number}
+		 */
+		this.y = y;
+
+		/**
+		 * The button number.
+		 * @type {number}
+		 */
+		this.button = button;
+
+		/**
+		 * Determines if the Ctrl modifier was being pressed with the mouse event.
+		 * @type {boolean}
+		 */
+		this.ctrl = ctrl;
+
+		/**
+		 * Determines if the Alt modifier was being pressed with the mouse event.
+		 * @type {boolean}
+		 */
+		this.alt = alt;
+
+		/**
+		 * Determines if the Shift modifier was being pressed with the mouse event.
+		 * @type {boolean}
+		 */
+		this.shift = shift;
+
+		/**
+		 * Type of mouse event (`mousedown`, `mouseup`, `mousemove`, `wheel`)
+		 * @type {string}
+		 */
+		this.type = type;
 	}
 }
 
@@ -120,7 +173,8 @@ class MouseEvent {
  * 
  * The return value of `iterator.next()` indicates if indicates if the next call to `iterator.next()` should send a Unicode character or a byte.
  * 
- * @param {Terminal} terminal 
+ * @param {Terminal} terminal
+ * @private
  */
 function* emitKeys(terminal) {
 	/**
@@ -726,6 +780,8 @@ function* emitKeys(terminal) {
 
 /**
  * Represents a terminal that emits events.
+ * 
+ * @alias module:tty-input
  */
 class Terminal extends EventEmitter {
 	/**
@@ -814,17 +870,19 @@ class Terminal extends EventEmitter {
 	}
 }
 Object.assign(Terminal, {
-	/** Only mousedown, mouseup and wheel events. */
+	/** Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events. */
 	VT200_MOUSE: 0,
 
-	/** Motion events only when buttons are down. (xterm) */
+	/** Constant used for `enableMouse()`: Motion events only when buttons are down. (xterm) */
 	BTN_EVENT_MOUSE: 2,
 
-	/** All events. (xterm) */
-	ANY_EVENT_MOUSE: 3
+	/** Constant used for `enableMouse()`: All events. (xterm) */
+	ANY_EVENT_MOUSE: 3,
+
+	KeyboardEvent,
+
+	MouseEvent
 });
 
 // Export stuff
 module.exports = Terminal;
-module.exports.KeyboardEvent = KeyboardEvent;
-module.exports.MouseEvent = MouseEvent;

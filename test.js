@@ -271,23 +271,14 @@ const tests = [
 
 // Actual code //
 
-var passedTests = 0,
-failedTests = 0;
+var failedTests = 0;
 
-function reportStatus() {
-	process.stdout.write(`\x1b[94m${passedTests+failedTests}/${tests.length} tests performed: ${failedTests} failed, ${passedTests} passed.\x1b[0m`)
-}
-
-const clearAndHome = "\x1b[2K\x1b[1G";
 function ok(str, ...args) {
-	passedTests++;
-	console.log(clearAndHome + "\x1b[92m✓\x1b[0m " + str, ...args);
-	reportStatus()
+	console.log("\x1b[92m✓\x1b[0m " + str, ...args);
 }
 function nok(str, ...args) {
 	failedTests++;
-	console.log(clearAndHome+"\x1b[91m✗\x1b[0m " + str, ...args);
-	reportStatus()
+	console.log("\x1b[91m✗\x1b[0m " + str, ...args);
 }
 
 (async function(){
@@ -360,6 +351,9 @@ function nok(str, ...args) {
 		}
 	}
 
-	console.log();
+	if (failedTests)
+		console.log("\x1b[91m%i out of %i failed tests.\x1b[0m", failedTests, tests.length);
+	else
+		console.log("\x1b[92mAll %i tests passed.\x1b[0m", tests.length);
 	process.exitCode = failedTests;
 })()

@@ -257,7 +257,6 @@ function* emitKeys(terminal) {
 	 */
 	s;
 
-	let escaped = 0;
 	main: while (true) {
 		// if (ch === "")
 		// 	continue;
@@ -273,6 +272,7 @@ function* emitKeys(terminal) {
 			alt: false,
 			shift: false
 		};
+		let escaped = 0;
 
 		if (ch === "\x1b") { // ESC
 			escaped = 1;

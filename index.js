@@ -99,7 +99,7 @@ class MouseEvent {
 		this.y = y;
 
 		/**
-		 * The button number.
+		 * The button number. This property might be absent for `mouseup` events.
 		 * @type {number}
 		 */
 		this.button = button;

@@ -221,7 +221,7 @@ The y coordinate of where the mouse event happened. (1 = topmost row.)
 <a name="module_tty-input--Terminal.MouseEvent+button"></a>
 
 ##### mouseEvent.button : <code>number</code>
-The button number.
+The button number. This property might be absent for `mouseup` events.
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-input--Terminal.MouseEvent)  
 <a name="module_tty-input--Terminal.MouseEvent+ctrl"></a>

@@ -1,6 +1,6 @@
 {
   "name": "tty-input",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A package for handling terminal input (mouse, keyboard and clipboard).",
   "main": "index.js",
   "scripts": {

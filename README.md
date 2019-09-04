@@ -2,7 +2,7 @@
 
 _tty-input_ is a fast library for handling input (keyboard, mouse and bracketed paste mode) from the terminal made for interactive, terminal-based applications. It has several advantages compared to the native `readline` module and other popular alternatives, including:
 
-- Full mouse support (VT100 and SGR extended);
+- Full mouse support (VT200 and SGR extended);
 - Bracketed paste mode support;
 - Full UTF-8 support;
 - Keys always have objects;

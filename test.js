@@ -1,28 +1,5 @@
 /* This is the test script for tty-input */
 
-const Terminal = require("./index.js"),
-stream = require("stream"),
-assert = require("assert");
-
-var passedTests = 0,
-failedTests = 0;
-
-function reportStatus() {
-	process.stdout.write(`\x1b[94m${passedTests+failedTests}/${tests.length} tests performed: ${failedTests} failed, ${passedTests} passed.\x1b[0m`)
-}
-
-const clearAndHome = "\x1b[2K\x1b[1G";
-function ok(str, ...args) {
-	passedTests++;
-	console.log(clearAndHome + "\x1b[92m✓\x1b[0m " + str, ...args);
-	reportStatus()
-}
-function nok(str, ...args) {
-	failedTests++;
-	console.log(clearAndHome+"\x1b[91m✗\x1b[0m " + str, ...args);
-	reportStatus()
-}
-
 const tests = [
 	{
 		name: "Char a",
@@ -64,19 +41,6 @@ const tests = [
 		})
 	},
 	{
-		name: "Char 😁",
-		sequence: "😁",
-		type: "keypress",
-		ev: new Terminal.KeyboardEvent({
-			name: "😁",
-			sequence: "😁",
-			isSpecial: false,
-			alt: false,
-			ctrl: false,
-			shift: false
-		})
-	},
-	{
 		name: "Alt+Char 👌",
 		sequence: "\x1b👌",
 		type: "keypress",
@@ -85,6 +49,19 @@ const tests = [
 			sequence: "\x1b👌",
 			isSpecial: false,
 			alt: true,
+			ctrl: false,
+			shift: false
+		})
+	},
+	{
+		name: "Char 😁",
+		sequence: "😁",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "😁",
+			sequence: "😁",
+			isSpecial: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
@@ -232,14 +209,91 @@ const tests = [
 			shift: true
 		})
 	},
+	{
+		name: "Mousedown left (1, 1)",
+		sequence: "\x1b[M !!",
+		type: "mousedown",
+		ev: new Terminal.MouseEvent({
+			x: 1,
+			y: 1,
+			button: 1,
+			alt: false,
+			ctrl: false,
+			shift: false,
+			type: "mousedown"
+		})
+	},
+	{
+		name: "Mouseup (10, 1)",
+		sequence: "\x1b[M#*!",
+		type: "mouseup",
+		ev: new Terminal.MouseEvent({
+			x: 10,
+			y: 1,
+			alt: false,
+			ctrl: false,
+			shift: false,
+			type: "mouseup"
+		})
+	},
+	{
+		name: "Click right (1, 5)",
+		sequence: "\x1b[M\"!%",
+		type: "mousedown",
+		ev: new Terminal.MouseEvent({
+			x: 1,
+			y: 5,
+			button: 3,
+			alt: false,
+			ctrl: false,
+			shift: false,
+			type: "mousedown"
+		})
+	},
+	{
+		name: "Mouseup (160, 160)",
+		sequence: [0x1b, 0x5b, 0x4d, 0x23, 0xc0, 0xc0],
+		type: "mouseup",
+		ev: new Terminal.MouseEvent({
+			x: 160,
+			y: 160,
+			alt: false,
+			ctrl: false,
+			shift: false,
+			type: "mouseup"
+		})
+	},
 ];
 
 // Actual code //
 
+const Terminal = require("./index.js"),
+stream = require("stream"),
+assert = require("assert");
+
+var passedTests = 0,
+failedTests = 0;
+
+function reportStatus() {
+	process.stdout.write(`\x1b[94m${passedTests+failedTests}/${tests.length} tests performed: ${failedTests} failed, ${passedTests} passed.\x1b[0m`)
+}
+
+const clearAndHome = "\x1b[2K\x1b[1G";
+function ok(str, ...args) {
+	passedTests++;
+	console.log(clearAndHome + "\x1b[92m✓\x1b[0m " + str, ...args);
+	reportStatus()
+}
+function nok(str, ...args) {
+	failedTests++;
+	console.log(clearAndHome+"\x1b[91m✗\x1b[0m " + str, ...args);
+	reportStatus()
+}
+
 (async function(){
-	process.stdout.write("\x1b[3g\x1b[24G\x1bH\x1b[0G"); // Clear the tab stops, move the cursor and set a tab stop.
+	process.stdout.write("\x1b[3g\x1b[28G\x1bH\x1b[0G"); // Clear the tab stops, move the cursor and set a tab stop.
 	console.log("  \x1b[1mNAME\tSEQUENCE\x1b[0m");
-	console.log("----------------------------------------");
+	console.log("--------------------------------------------");
 
 	let testIndex;
 
@@ -302,13 +356,10 @@ const tests = [
 			assert.deepStrictEqual(actual, ev);
 			ok("%s\t%O", name, sequence)
 		} catch(e) {
-			nok(name + "\n" + e.message + "\n")
+			nok("%s\t%O\n%s\n", name, sequence, e.message)
 		}
 	}
 
-	// if (failedTests)
-	// 	console.log("%i out of %i failed tests.", failedTests, tests.length);
-	// else
-	// 	console.log("All tests passed.");
+	console.log();
 	process.exitCode = failedTests;
 })()

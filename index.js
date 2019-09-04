@@ -178,7 +178,7 @@ function* emitKeys(terminal) {
 	 * @param {boolean} mouseUp If it is a mouseup event (used by SGR).
 	 */
 	function parseAndEmitMouse(b, x, y, mouseUp = false) {
-		if (b || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y))
+		if (b<0 || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y))
 			return;
 
 		/* Quotes (indicated by "//>") are from <https://invisible-island.net/xterm/ctlseqs/ctlseqs.pdf> */

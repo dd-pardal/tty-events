@@ -12,14 +12,14 @@ function reportStatus() {
 }
 
 const clearAndHome = "\x1b[2K\x1b[1G";
-function ok(str) {
+function ok(str, ...args) {
 	passedTests++;
-	console.log(clearAndHome+"\x1b[92m✓\x1b[0m %s", str);
+	console.log(clearAndHome + "\x1b[92m✓\x1b[0m " + str, ...args);
 	reportStatus()
 }
-function nok(str) {
+function nok(str, ...args) {
 	failedTests++;
-	console.log(clearAndHome+"\x1b[91m✗\x1b[0m %s", str);
+	console.log(clearAndHome+"\x1b[91m✗\x1b[0m " + str, ...args);
 	reportStatus()
 }
 
@@ -32,7 +32,7 @@ const tests = [
 			name: "a",
 			sequence: "a",
 			isSpecial: false,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
@@ -45,7 +45,7 @@ const tests = [
 			name: "ç",
 			sequence: "ç",
 			isSpecial: false,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
@@ -58,7 +58,7 @@ const tests = [
 			name: "➀",
 			sequence: "➀",
 			isSpecial: false,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
@@ -71,7 +71,20 @@ const tests = [
 			name: "😁",
 			sequence: "😁",
 			isSpecial: false,
-			meta: false,
+			alt: false,
+			ctrl: false,
+			shift: false
+		})
+	},
+	{
+		name: "Alt+Char 👌",
+		sequence: "\x1b👌",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "👌",
+			sequence: "\x1b👌",
+			isSpecial: false,
+			alt: true,
 			ctrl: false,
 			shift: false
 		})
@@ -84,59 +97,59 @@ const tests = [
 			name: "escape",
 			sequence: "\x1b",
 			isSpecial: true,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
 	},
 	{
-		name: "F1 ([[A)",
+		name: "F1",
 		sequence: "\x1b[[A",
 		type: "keypress",
 		ev: new Terminal.KeyboardEvent({
 			name: "f1",
 			sequence: "\x1b[[A",
 			isSpecial: true,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
 	},
 	{
-		name: "F2 (OQ)",
+		name: "F2",
 		sequence: "\x1bOQ",
 		type: "keypress",
 		ev: new Terminal.KeyboardEvent({
 			name: "f2",
 			sequence: "\x1bOQ",
 			isSpecial: true,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
 	},
 	{
-		name: "F3 ([R)",
+		name: "F3",
 		sequence: "\x1b[R",
 		type: "keypress",
 		ev: new Terminal.KeyboardEvent({
 			name: "f3",
 			sequence: "\x1b[R",
 			isSpecial: true,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
 	},
 	{
-		name: "F4 ([14~)",
+		name: "F4",
 		sequence: "\x1b[14~",
 		type: "keypress",
 		ev: new Terminal.KeyboardEvent({
 			name: "f4",
 			sequence: "\x1b[14~",
 			isSpecial: true,
-			meta: false,
+			alt: false,
 			ctrl: false,
 			shift: false
 		})
@@ -149,9 +162,74 @@ const tests = [
 			name: "f5",
 			sequence: "\x1b[15^",
 			isSpecial: true,
-			meta: false,
+			alt: false,
 			ctrl: true,
 			shift: false
+		})
+	},
+	{
+		name: "Shift+F1",
+		sequence: "\x1b[1;2P",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "f1",
+			sequence: "\x1b[1;2P",
+			isSpecial: true,
+			alt: false,
+			ctrl: false,
+			shift: true
+		})
+	},
+	{
+		name: "Ctrl+Alt+F6",
+		sequence: "\x1b[17;7~",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "f6",
+			sequence: "\x1b[17;7~",
+			isSpecial: true,
+			alt: true,
+			ctrl: true,
+			shift: false
+		})
+	},
+	{
+		name: "Alt+Shift+F7",
+		sequence: "\x1b\x1b[18$",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "f7",
+			sequence: "\x1b\x1b[18$",
+			isSpecial: true,
+			alt: true,
+			ctrl: false,
+			shift: true
+		})
+	},
+	{
+		name: "Home",
+		sequence: "\x1b[1~",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "home",
+			sequence: "\x1b[1~",
+			isSpecial: true,
+			alt: false,
+			ctrl: false,
+			shift: false
+		})
+	},
+	{
+		name: "Shift+Insert",
+		sequence: "\x1b[2;2~",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "insert",
+			sequence: "\x1b[2;2~",
+			isSpecial: true,
+			alt: false,
+			ctrl: false,
+			shift: true
 		})
 	},
 ];
@@ -159,6 +237,10 @@ const tests = [
 // Actual code //
 
 (async function(){
+	process.stdout.write("\x1b[3g\x1b[24G\x1bH\x1b[0G"); // Clear the tab stops, move the cursor and set a tab stop.
+	console.log("  \x1b[1mNAME\tSEQUENCE\x1b[0m");
+	console.log("----------------------------------------");
+
 	let testIndex;
 
 	const inputStream = new class InputStream extends stream.Readable {
@@ -211,7 +293,6 @@ const tests = [
 			const actual = await new Promise((_res, rej)=>{
 				res = _res;
 				term.on(type, res);
-
 				inputStream.$push(sequence);
 
 				setTimeout(()=>rej({message: "Event not recieved."}), 200);
@@ -219,9 +300,9 @@ const tests = [
 			term.removeListener(type, res);
 
 			assert.deepStrictEqual(actual, ev);
-			ok(name)
+			ok("%s\t%O", name, sequence)
 		} catch(e) {
-			nok(name + ": " + e.message)
+			nok(name + "\n" + e.message + "\n")
 		}
 	}
 

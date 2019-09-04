@@ -9,8 +9,8 @@ class KeyboardEvent {
 			name,
 			sequence,
 			isSpecial = false,
-			meta = false,
 			ctrl = false,
+			alt = false,
 			shift = false
 		}
 	) {
@@ -36,17 +36,17 @@ class KeyboardEvent {
 		this.isSpecial = isSpecial;
 
 		/**
-		 * Determines if the meta modifier (Windows symbol or ⌘) was being pressed with the key. If the key is not a special key, this is always `false`.
-		 * Note that most terminal emulators will not interpret key combinations with the meta key.
-		 * @type {boolean}
-		 */
-		this.meta = meta;
-
-		/**
 		 * Determines if the Ctrl modifier was being pressed with the key. If the key is not a special key, this is always `false`.
 		 * @type {boolean}
 		 */
 		this.ctrl = ctrl;
+
+		/**
+		 * Determines if the alt modifier was being pressed with the key. If the key is not a special key, this is always `false`.
+		 * Note that most terminal emulators will not interpret key combinations with the alt key.
+		 * @type {boolean}
+		 */
+		this.alt = alt;
 
 		/**
 		 * Determines if the Shift modifier was being pressed with the key. If the key is not a special key, this is always `false`.
@@ -56,7 +56,7 @@ class KeyboardEvent {
 	}
 
 	/**
-	 * Represents the key combination with a string in the format `["Meta+"]["Ctrl+"]["Shift+"]key.name`.
+	 * Represents the key combination with a string in the format `["Alt+"]["Ctrl+"]["Shift+"]key.name`.
 	 * 
 	 * For example:
 	 * 
@@ -67,8 +67,8 @@ class KeyboardEvent {
 	 * - `"+"`
 	 */
 	toString() {
-		return (this.meta? "Meta+":"") +
-			(this.ctrl? "Ctrl+":"") +
+		return (this.ctrl? "Ctrl+":"") +
+			(this.alt? "Alt+":"") +
 			(this.shift? "Shift+":"") +
 			this.name
 	}
@@ -112,7 +112,7 @@ class MouseEvent {
 	                (left_alt  * 2) +
 	                (ctrl      * 4) +
 	                (right_alt * 8)
-	- two leading ESCs (~~apparently mean the same as one leading ESC~~) mean that the Meta key was being pressed.
+	- two leading ESCs (~~apparently mean the same as one leading ESC~~) mean that the Alt key was being pressed.
 */
 
 /**
@@ -130,6 +130,9 @@ function* emitKeys(terminal) {
 	 * @param {boolean} mouseUp If it is a mouseup event (used by SGR).
 	 */
 	function parseAndEmitMouse(b, x, y, mouseUp = false) {
+		if (b<1 || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y))
+			return;
+
 		/* Quotes (indicated by "//>") are from <https://invisible-island.net/xterm/ctlseqs/ctlseqs.pdf> */
 
 		let button, evType, evOpts = {x, y};
@@ -178,11 +181,11 @@ function* emitKeys(terminal) {
 
 
 		//> The next three bits encode the modifiers which were down when the button was pressed
-		//> and are added together: 4=Shift, 8=Meta, 16=Control.
+		//> and are added together: 4=Shift, 8=Alt, 16=Control.
 		//> Note however that the shift and control bits are normally unavailable because xterm uses the control modifier
 		//> with mouse for popup menus, and the shift modifier is used in the default translations for button events.
 		evOpts.shift = Boolean(b & 4);
-		evOpts.meta = Boolean(b & 8);
+		evOpts.alt = Boolean(b & 8);
 		evOpts.ctrl = Boolean(b & 16);
 
 		evOpts.type = evType;
@@ -206,20 +209,20 @@ function* emitKeys(terminal) {
 	 */
 	s;
 
+	let escaped = 0;
 	main: while (true) {
 		// if (ch === "")
 		// 	continue;
 
 		s = ch;
 
-		let escaped = 0;
 
 		const key = {
 			name: undefined,
 			sequence: undefined,
 			isSpecial: true,
 			ctrl: false,
-			meta: false,
+			alt: false,
 			shift: false
 		};
 
@@ -382,12 +385,12 @@ function* emitKeys(terminal) {
 
 			// Parse the key modifier
 			key.ctrl = Boolean(modifier & 4);
-			key.meta = Boolean(modifier & 10);
+			key.alt = Boolean(modifier & 10);
 			key.shift = Boolean(modifier & 1);
 
 			if (escaped >= 2) {
-				// Double-escaped sequences usually mean that the Meta key was being pressed.
-				key.meta = true;
+				// Double-escaped sequences usually mean that the Alt key was being pressed.
+				key.alt = true;
 			}
 		
 			if (code[0] === "[") {
@@ -542,7 +545,7 @@ function* emitKeys(terminal) {
 		} else {
 			// Key is not an escape sequence, but might be escaped.
 
-			key.meta = Boolean(escaped); // In most terminals, typing a character while holding Alt precedes the char with an ESC.
+			key.alt = Boolean(escaped); // In most terminals, typing a character while holding Alt precedes the char with an ESC.
 			key.sequence = s;
 
 			if (ch === '\r') {
@@ -700,7 +703,7 @@ function* emitKeys(terminal) {
 	
 				}/* else // Continuation at start of sequence (10xx xxxx) */
 
-				key.sequence = key.name;
+				key.sequence = "\x1b".repeat(escaped)+key.name;
 			}
 		}
 

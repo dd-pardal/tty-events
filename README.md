@@ -1,6 +1,16 @@
 # tty-input #
 
-_tty-input_ is a fast library for handling input (keyboard, mouse and bracketed paste mode) from the terminal made for interactive, terminal-based applications.
+_tty-input_ is a fast library for handling input (keyboard, mouse and bracketed paste mode) from the terminal made for interactive, terminal-based applications. It has several advantages compared to the native `readline` module and other popular alternatives, including:
+
+- Full mouse support (VT100 and SGR extended);
+- Bracketed paste mode support;
+- Full UTF-8 support;
+- Keys always have objects;
+- Easy comparation (`key == "Ctrl+s"`);
+- Support for <kbd>Ctrl</kbd>+<kbd>@</kbd>, <kbd>Ctrl</kbd>+<kbd>[</kbd>, <kbd>Ctrl</kbd>+<kbd>\</kbd>, <kbd>Ctrl</kbd>+<kbd>]</kbd>, <kbd>Ctrl</kbd>+<kbd>^</kbd> and <kbd>Ctrl</kbd>+<kbd>-</kbd>;
+- Key combos with special/function keys (especially in Windows);
+- No need for `tty.setRawMode(true)`;
+- `unknownSequence` event.
 
 ## Usage Examples
 ### Keyboard
@@ -51,11 +61,7 @@ Because of the way terminals work, there are some aspects that might seem unintu
 
 ### Uppercase VS Shift
 
-An uppercase letter emits an event with the uppercase letter and with the `shift` property set to `false`. This is because there is no way to know if <kbd>Shift</kbd> was being pressed (an uppercase letter can be produced with <kbd>Caps Lock</kbd>). For example: <kbd>Meta</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd> emits `Meta+A` instead of `Meta+Shift+a`.
-
-### Meta Modifier
-
-The `Meta` modifier might not correspond to the <kbd>Meta</kbd> or <kbd>Windows</kbd> keys. It's usually <kbd>Alt</kbd>.
+An uppercase letter emits an event with the uppercase letter and with the `shift` property set to `false`. This is because there is no way to know if <kbd>Shift</kbd> was being pressed (an uppercase letter can be produced with <kbd>Caps Lock</kbd>). For example: <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> emits `Alt+A` instead of `Alt+Shift+a`.
 
 ### "Twin" Keys
 

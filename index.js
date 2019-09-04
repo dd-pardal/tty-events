@@ -62,13 +62,7 @@ class KeyboardEvent {
 	/**
 	 * Represents the key combination with a string in the format `["Alt+"]["Ctrl+"]["Shift+"]key.name`.
 	 * 
-	 * For example:
-	 * 
-	 * - `"b"`
-	 * - `"B"`
-	 * - `"Ctrl+e"`
-	 * - `"Ctrl+Shift+home"`
-	 * - `"+"`
+	 * For example: `"b"`, `"B"`, `"Ctrl+e"`, `"Ctrl+Shift+home"`, `"+"`.
 	 */
 	toString() {
 		return (this.ctrl? "Ctrl+":"") +
@@ -828,18 +822,23 @@ class Terminal extends EventEmitter {
 	}
 
 	/**
-	 * Removes the listener from the input stream, allowing Node to exit.
+	 * Removes the `data` listener from the input stream, allowing Node to exit.
 	 */
 	pause() {
 		this._input.removeListener("data", this._dataListener);
 	}
 	/**
-	 * Removes the listener from the input stream, allowing Node to exit.
+	 * Attaches the `data` listener to the input stream.
 	 */
 	resume() {
 		this._input.on("data", this._dataListener);
 	}
 
+	/**
+	 * Enables mouse events.
+	 * @param {number} mode The mouse mode (one of the constants)
+	 * @param {boolean} sgr Whether to try to activate SGR extended mode
+	 */
 	enableMouse(mode = 0, sgr = true) {
 		// If a terminal dosen't support a certain mode, try to enable the most complete one.
 		this.output.write(`\x1b[?1000h`);
@@ -852,6 +851,9 @@ class Terminal extends EventEmitter {
 		if (sgr)
 			this.output.write(`\x1b[?1006h`);
 	}
+	/**
+	 * Disables mouse events.
+	 */
 	disableMouse() {
 		this.output.write(`\x1b[?1000l`);
 	}
@@ -869,6 +871,43 @@ class Terminal extends EventEmitter {
 		this.output.write("\x1b[?2004l")
 	}
 }
+/**
+ * Event fired when a key (or key combinaion) is pressed.
+ * 
+ * @event module:tty-input#keypress
+ * @type {KeyboardEvent}
+ */
+/**
+ * Event fired when a mouse button is pressed down.
+ * 
+ * @event module:tty-input#mousedown
+ * @type {MouseEvent}
+ */
+/**
+ * Event fired when a mouse button is released or when the cursor moves whitout any button currently pressed.
+ * 
+ * @event module:tty-input#mouseup
+ * @type {MouseEvent}
+ */
+/**
+ * Event fired when the cursor moves with one or more buttons currently pressed.
+ * 
+ * @event module:tty-input#mousemove
+ * @type {MouseEvent}
+ */
+/**
+ * Event fired when the mouse wheel is moved or when the scroll action is triggered (for example, using two fingers on a trackpad).
+ * 
+ * @event module:tty-input#wheel
+ * @type {MouseEvent}
+ */
+/**
+ * Event fired when text is pasted while bracketed paste mode is activated.
+ * 
+ * @event module:tty-input#paste
+ * @type {string}
+ */
+
 Object.assign(Terminal, {
 	/** Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events. */
 	VT200_MOUSE: 0,

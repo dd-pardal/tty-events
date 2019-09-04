@@ -8,8 +8,16 @@
         * _instance_
             * [.pause()](#module_tty-input--Terminal+pause)
             * [.resume()](#module_tty-input--Terminal+resume)
+            * [.enableMouse(mode, sgr)](#module_tty-input--Terminal+enableMouse)
+            * [.disableMouse()](#module_tty-input--Terminal+disableMouse)
             * [.enableBPM()](#module_tty-input--Terminal+enableBPM)
             * [.disableBPM()](#module_tty-input--Terminal+disableBPM)
+            * ["keypress"](#module_tty-input--Terminal+event_keypress)
+            * ["mousedown"](#module_tty-input--Terminal+event_mousedown)
+            * ["mouseup"](#module_tty-input--Terminal+event_mouseup)
+            * ["mousemove"](#module_tty-input--Terminal+event_mousemove)
+            * ["wheel"](#module_tty-input--Terminal+event_wheel)
+            * ["paste"](#module_tty-input--Terminal+event_paste)
         * _inner_
             * [~KeyboardEvent](#module_tty-input--Terminal.KeyboardEvent)
                 * [.name](#module_tty-input--Terminal.KeyboardEvent+name) : <code>string</code>
@@ -49,13 +57,31 @@ Represents a terminal that emits events.
 <a name="module_tty-input--Terminal+pause"></a>
 
 #### terminal.pause()
-Removes the listener from the input stream, allowing Node to exit.
+Removes the `data` listener from the input stream, allowing Node to exit.
 
 **Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
 <a name="module_tty-input--Terminal+resume"></a>
 
 #### terminal.resume()
-Removes the listener from the input stream, allowing Node to exit.
+Attaches the `data` listener to the input stream.
+
+**Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+enableMouse"></a>
+
+#### terminal.enableMouse(mode, sgr)
+Enables mouse events.
+
+**Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| mode | <code>number</code> | <code>0</code> | The mouse mode (one of the constants) |
+| sgr | <code>boolean</code> | <code>true</code> | Whether to try to activate SGR extended mode |
+
+<a name="module_tty-input--Terminal+disableMouse"></a>
+
+#### terminal.disableMouse()
+Disables mouse events.
 
 **Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
 <a name="module_tty-input--Terminal+enableBPM"></a>
@@ -70,6 +96,42 @@ Enables bracketed paste mode.
 Disables bracketed paste mode.
 
 **Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+event_keypress"></a>
+
+#### "keypress"
+Event fired when a key (or key combinaion) is pressed.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+event_mousedown"></a>
+
+#### "mousedown"
+Event fired when a mouse button is pressed down.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+event_mouseup"></a>
+
+#### "mouseup"
+Event fired when a mouse button is released or when the cursor moves whitout any button currently pressed.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+event_mousemove"></a>
+
+#### "mousemove"
+Event fired when the cursor moves with one or more buttons currently pressed.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+event_wheel"></a>
+
+#### "wheel"
+Event fired when the mouse wheel is moved or when the scroll action is triggered (for example, using two fingers on a trackpad).
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
+<a name="module_tty-input--Terminal+event_paste"></a>
+
+#### "paste"
+Event fired when text is pasted while bracketed paste mode is activated.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-input--Terminal)  
 <a name="module_tty-input--Terminal.KeyboardEvent"></a>
 
 #### Terminal~KeyboardEvent
@@ -125,7 +187,7 @@ Determines if the Shift modifier was being pressed with the key. If the key is n
 <a name="module_tty-input--Terminal.KeyboardEvent+toString"></a>
 
 ##### keyboardEvent.toString()
-Represents the key combination with a string in the format `["Alt+"]["Ctrl+"]["Shift+"]key.name`.For example:- `"b"`- `"B"`- `"Ctrl+e"`- `"Ctrl+Shift+home"`- `"+"`
+Represents the key combination with a string in the format `["Alt+"]["Ctrl+"]["Shift+"]key.name`.For example: `"b"`, `"B"`, `"Ctrl+e"`, `"Ctrl+Shift+home"`, `"+"`.
 
 **Kind**: instance method of [<code>KeyboardEvent</code>](#module_tty-input--Terminal.KeyboardEvent)  
 <a name="module_tty-input--Terminal.MouseEvent"></a>

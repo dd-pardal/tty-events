@@ -86,3 +86,7 @@ Also, some features and/or key combinations don't work in some terminal emulator
 
 - Mouse support isn't available in Windows Console.
 - Bracketed paste mode isn't available in Windows Console.
+
+## Documentation
+
+The documentation is available [here](docs.md).

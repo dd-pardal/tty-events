@@ -1,6 +1,8 @@
 # tty-input #
 
-_tty-input_ is a fast library for handling input (keyboard, mouse and bracketed paste mode) from the terminal made for interactive, terminal-based applications. It has several advantages compared to the native `readline` module and other popular alternatives, including:
+_tty-input_ is a fast package for handling input (keyboard, mouse and bracketed paste mode) from the terminal, made for interactive, terminal-based applications.
+
+It has several advantages compared to the native `readline` module and other popular alternatives, including:
 
 - Full mouse support (VT200 and SGR extended);
 - Bracketed paste mode support;
@@ -21,9 +23,9 @@ Here's a simple logger:
 if (process.stdin.isTTY)
 	process.stdin.setRawMode(true);
 
-const te = new (require("tty-input"));
+const term = new (require("tty-input"));
 
-te.on("keypress", (key)=>{
+term.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
 		process.exit(0)
 	}
@@ -36,9 +38,9 @@ te.on("keypress", (key)=>{
 _tty-input_ supports mouse (VT200 and SGR extended). In order to receive mouse events, the `enableMouse()` function must be called first.
 
 ```js
-enableMouse();
+term.enableMouse();
 
-te.on("mousedown", (ev)=>{
+term.on("mousedown", (ev)=>{
 	console.log("You clicked at (%i, %i) with the button no. %i.", ev.x, ev.y, ev.button)
 })
 ```
@@ -48,9 +50,9 @@ te.on("mousedown", (ev)=>{
 _tty-input_ supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the `enableBPM()` function must be called first.
 
 ```js
-enableBPM();
+term.enableBPM();
 
-te.on("paste", (text)=>{
+term.on("paste", (text)=>{
 	console.log("You pasted %O.", text)
 })
 ```
@@ -86,7 +88,8 @@ Also, some features and/or key combinations don't work in some terminal emulator
 
 - Mouse support isn't available in Windows Console.
 - Bracketed paste mode isn't available in Windows Console.
+- <kbd>Ctrl</kbd>+<kbd>@</kbd> doesn't work in Windows Console and in some keyboard layouts <kbd>Ctrl</kbd>+<kbd>\\</kbd>, <kbd>Ctrl</kbd>+<kbd>]</kbd>, <kbd>Ctrl</kbd>+<kbd>^</kbd> and <kbd>Ctrl</kbd>+<kbd>-</kbd> don't work too.
 
 ## Documentation
 
-The documentation is available [here](docs.md).
+The full documentation is available [here](docs.md).

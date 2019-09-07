@@ -20,6 +20,8 @@
             * ["mousemove"](#module_tty-events--Terminal+event_mousemove)
             * ["wheel"](#module_tty-events--Terminal+event_wheel)
             * ["paste"](#module_tty-events--Terminal+event_paste)
+            * ["focusin"](#module_tty-events--Terminal+event_focusin)
+            * ["focusout"](#module_tty-events--Terminal+event_focusout)
         * _static_
             * [.KeyboardEvent](#module_tty-events--Terminal..KeyboardEvent)
                 * [.name](#module_tty-events--Terminal..KeyboardEvent+name) : <code>string</code>
@@ -144,6 +146,18 @@ Event fired when the mouse wheel is moved or when the scroll action is triggered
 
 #### "paste"
 Event fired when text is pasted while bracketed paste mode is activated.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+<a name="module_tty-events--Terminal+event_focusin"></a>
+
+#### "focusin"
+Event fired when the terminal window receives focus.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+<a name="module_tty-events--Terminal+event_focusout"></a>
+
+#### "focusout"
+Event fired when the terminal window loses focus.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal..KeyboardEvent"></a>

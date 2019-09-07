@@ -940,6 +940,18 @@ class Terminal extends EventEmitter {
  * @event module:tty-events#paste
  * @type {string}
  */
+/**
+ * Event fired when the terminal window receives focus.
+ * 
+ * @event module:tty-events#focusin
+ * @type {string}
+ */
+/**
+ * Event fired when the terminal window loses focus.
+ * 
+ * @event module:tty-events#focusout
+ * @type {string}
+ */
 
 Object.assign(Terminal, {
 	/**

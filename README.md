@@ -2,16 +2,17 @@
 
 _tty-input_ is a fast package for handling input (keyboard, mouse and bracketed paste mode) from the terminal, made for interactive, terminal-based applications.
 
-It has several advantages compared to the native `readline` module and other popular alternatives, including:
+**Note: This package has been renamed to [`tty-events`](https://github.com/dd-pardal/tty-events). Please use it instead.**
+
+## Features
 
 - Full mouse support (VT200 and SGR extended);
 - Bracketed paste mode support;
+- Focus support (xterm);
 - Full UTF-8 support;
 - Keys always have objects;
 - Easy comparation (`key == "Ctrl+s"`);
-- Support for <kbd>Ctrl</kbd>+<kbd>@</kbd>, <kbd>Ctrl</kbd>+<kbd>\\</kbd>, <kbd>Ctrl</kbd>+<kbd>]</kbd>, <kbd>Ctrl</kbd>+<kbd>^</kbd> and <kbd>Ctrl</kbd>+<kbd>-</kbd>;
-- Key combos with special/function keys (especially in Windows);
-- No need for `tty.setRawMode(true)`;
+- Support for more key combinations (especially in Windows);
 - `unknownSequence` event.
 
 ## Usage Examples
@@ -30,31 +31,46 @@ term.on("keypress", (key)=>{
 		process.exit(0)
 	}
 	console.log("You pressed %s.", key.toString())
-})
+});
 ```
 
 ### Mouse
 
-_tty-input_ supports mouse (VT200 and SGR extended). In order to receive mouse events, the `enableMouse()` function must be called first.
+_tty-input_ supports mouse (VT200 and SGR extended). In order to receive mouse events, the [`enableMouse()`](docs.md#module_tty-input--Terminal+enableMouse) function must be called first.
 
 ```js
 term.enableMouse();
 
 term.on("mousedown", (ev)=>{
 	console.log("You clicked at (%i, %i) with the button no. %i.", ev.x, ev.y, ev.button)
-})
+});
 ```
 
 ### Pasting
 
-_tty-input_ supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the `enableBPM()` function must be called first.
+_tty-input_ supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the [`enableBPM()`](docs.md#module_tty-input--Terminal+enableBPM) function must be called first.
 
 ```js
 term.enableBPM();
 
 term.on("paste", (text)=>{
 	console.log("You pasted %O.", text)
-})
+});
+```
+
+### Focus
+
+Focus events allow an applicatioin to stop updating the screen when it's not necessary. In order to receive paste events, the [`enableFocus()`](docs.md#module_tty-input--Terminal+enableFocus) function must be called first.
+
+```js
+term.enableFocus();
+
+term.on("focusin", ()=>{
+	console.log("The terminal received focus.")
+});
+term.on("focusout", ()=>{
+	console.log("The terminal lost focus.")
+});
 ```
 
 ## Important Notes and Limitations

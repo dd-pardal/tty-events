@@ -11,26 +11,30 @@ if (process.stdin.isTTY)
 
 const te = new Terminal;
 
+function dataListener(data) {
+	var str = "";
+	for (let i=0; i<data.length; i++)
+		str += data[i].toString(16) + " ";
+
+	console.log(str)
+}
+process.stdin.on("data", dataListener)
+
 te.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
-		process.stdout.write("\x1b[?1003l")
-		process.exit(0)
+		te.disableMouse()
+		te.disableBPM()
+		te.disableFocus()
+		process.exit();
 	}
 	console.log(key, key.toString())
 })
 te.on("unknownSequence", (s)=>console.log("Unknown sequence: %O", s))
 te.on("mouse", (s)=>console.log("%O", s))
 te.on("paste", (s)=>console.log("Pasted: %O", s))
+te.on("focusin", ()=>console.log("Focus in."))
+te.on("focusout", ()=>console.log("Focus out."))
 
-process.stdin.on("data", (data)=>{
-	var str = "";
-	for (let i=0; i<data.length; i++)
-		str += data[i].toString(16) + " ";
-
-	console.log(str)
-})
-
-process.stdout.write("\x1b[?1003h")
-
-te.enableMouse()
+te.enableMouse(Terminal.ANY_EVENT_MOUSE)
 te.enableBPM()
+te.enableFocus()

@@ -6,9 +6,11 @@ const EventEmitter = require("events");
 
 /**
  * Represents a keyboard event (key or key combination).
- * @alias module:tty-input.KeyboardEvent
  */
 class KeyboardEvent {
+	/**
+	 * @alias module:tty-input.KeyboardEvent
+	 */
 	constructor(
 		{
 			name,
@@ -18,7 +20,7 @@ class KeyboardEvent {
 			alt = false,
 			shift = false
 		}
-	) {
+	) {		
 		if (typeof name !== "string")
 			throw new TypeError();
 
@@ -60,9 +62,7 @@ class KeyboardEvent {
 	}
 
 	/**
-	 * Represents the key combination with a string in the format `["Alt+"]["Ctrl+"]["Shift+"]key.name`.
-	 * 
-	 * For example: `"b"`, `"B"`, `"Ctrl+e"`, `"Ctrl+Shift+home"`, `"+"`.
+	 * Represents the key combination with a string in the format `["Ctrl+"]["Alt+"]["Shift+"]key.name`. For example: `"b"`, `"B"`, `"Ctrl+e"`, `"Ctrl+Shift+home"`, `"+"`.
 	 */
 	toString() {
 		return (this.ctrl? "Ctrl+":"") +
@@ -74,56 +74,65 @@ class KeyboardEvent {
 
 /**
  * Represents a mouse event (click, wheel, etc.).
- * @alias module:tty-input.MouseEvent
  */
 class MouseEvent {
+	/**
+	 * @alias module:tty-input.MouseEvent
+	 */
 	constructor({
 		x,
 		y,
 		button,
-		ctrl,
-		alt,
-		shift,
+		ctrl = false,
+		alt = false,
+		shift = false,
 		type
 	}) {
 		/**
 		 * The x coordinate of where the mouse event happened. (1 = leftmost column.)
+		 * 
 		 * @type {number}
 		 */
 		this.x = x;
 
-		/**
+		/** 
 		 * The y coordinate of where the mouse event happened. (1 = topmost row.)
+		 * 
 		 * @type {number}
 		 */
 		this.y = y;
 
 		/**
 		 * The button number. This property might be absent for `mouseup` events.
+		 * 
 		 * @type {number}
 		 */
 		this.button = button;
 
 		/**
-		 * Determines if the Ctrl modifier was being pressed with the mouse event.
+		 * Determines if the Ctrl modifier was being pressed when the mouse event occured.
+		 * 
 		 * @type {boolean}
 		 */
 		this.ctrl = ctrl;
 
 		/**
-		 * Determines if the Alt modifier was being pressed with the mouse event.
+		 * Determines if the Alt modifier was being pressed when the mouse event occured.
+		 * 
 		 * @type {boolean}
 		 */
 		this.alt = alt;
 
 		/**
-		 * Determines if the Shift modifier was being pressed with the mouse event.
+		 * Determines if the Shift modifier was being pressed when the mouse event occured.
+		 * 
 		 * @type {boolean}
 		 */
 		this.shift = shift;
 
 		/**
-		 * Type of mouse event (`mousedown`, `mouseup`, `mousemove`, `wheel`)
+		 * Type of mouse event (`mousedown`, `mouseup`, `mousemove` or `wheel`).
+		 * 
 		 * @type {string}
 		 */
 		this.type = type;
@@ -300,12 +309,14 @@ function* emitKeys(terminal) {
 		}
 
 		if (escaped && (ch === 'O' || ch === '[')) {
-			// ANSI escape sequence
+			// Escape sequence
 			let code = ch;
 			let modifier = 0;
 
 
 			if (ch === 'O') {
+				// SS3 sequences:
+				//
 				// ESC O letter
 				// ESC O modifier letter
 				s += (ch = yield);
@@ -317,6 +328,8 @@ function* emitKeys(terminal) {
 
 				code += ch;
 			} else if (ch === '[') {
+				// CSI sequences:
+				//
 				// ESC [ letter
 				// ESC [ modifier letter
 				// ESC [ [ modifier letter
@@ -395,8 +408,8 @@ function* emitKeys(terminal) {
 
 				const lastChar = s[s.length-1];
 
-				if (s[2] === "<" && (lastChar==="M" || lastChar==="m")) {
-					// MOUSE
+				// CSI sequences might not represent a key.
+				if (s[2] === "<" && (lastChar==="M" || lastChar==="m")) { // SGR MOUSE
 
 					const args = s.slice(3, s.length-1).split(";");
 
@@ -410,6 +423,39 @@ function* emitKeys(terminal) {
 
 						ch = yield;
 						continue;
+					}
+				} else if (s[2] === "I") { // FOCUS IN
+					terminal.emit("focusin");
+
+					ch = yield;
+					continue;
+				} else if (s[2] === "O") { // FOCUS OUT
+					terminal.emit("focusout");
+					
+					ch = yield;
+					continue;
+				} else if (s === "\x1b[200~") { // BRACKETED PASTE MODE
+
+					// Loop until a ESC [ 2 0 1 ~ is recieved.
+					const endSeq = "\x1b[201~";
+					let byteStr = "", endSeqIndex = 0;
+					while (true) {
+						byteStr += (ch = yield);
+
+						if (ch === endSeq[endSeqIndex])
+							endSeqIndex++;
+						else
+							endSeqIndex = 0;
+
+						if (endSeqIndex >= endSeq.length) {
+							// A ESC [ 2 0 1 ~ was received.
+							
+							// Here we use the built-in UTF-8 decoder.
+							terminal.emit("paste", Buffer.from(byteStr.slice(0, byteStr.length - endSeq.length), "binary").toString("utf-8"))
+
+							ch = yield;
+							continue main;
+						}
 					}
 				}
 
@@ -548,32 +594,6 @@ function* emitKeys(terminal) {
 
 					/* misc. */
 					case '[Z': key.name = 'tab'; key.shift = true; break;
-
-					/* bracketed paste mode */
-					case '[200~':
-
-						// Loop until a ESC [ 2 0 1 ~ is recieved.
-						const endSeq = "\x1b[201~";
-						let byteStr = "", endSeqIndex = 0;
-						while (true) {
-							byteStr += (ch = yield);
-
-							if (ch === endSeq[endSeqIndex])
-								endSeqIndex++;
-							else
-								endSeqIndex = 0;
-
-							if (endSeqIndex >= endSeq.length) {
-								// A ESC [ 2 0 1 ~ was received.
-								
-								// Here we use the built-in UTF-8 decoder.
-								terminal.emit("paste", Buffer.from(byteStr.slice(0, byteStr.length - endSeq.length), "binary").toString("utf-8"))
-
-								ch = yield;
-								continue main;
-							}
-						}
-						break;
 
 					// default: key.name = undefined; break;
 				}
@@ -822,7 +842,7 @@ class Terminal extends EventEmitter {
 	}
 
 	/**
-	 * Removes the `data` listener from the input stream, allowing Node to exit.
+	 * Removes the `data` listener from the input stream.
 	 */
 	pause() {
 		this._input.removeListener("data", this._dataListener);
@@ -870,6 +890,19 @@ class Terminal extends EventEmitter {
 	disableBPM() {
 		this.output.write("\x1b[?2004l")
 	}
+
+	/**
+	 * Enables focus events.
+	 */
+	enableFocus() {
+		this.output.write("\x1b[?1004h")
+	}
+	/**
+	 * Disables focus events.
+	 */
+	disableFocus() {
+		this.output.write("\x1b[?1004l")
+	}
 }
 /**
  * Event fired when a key (or key combinaion) is pressed.
@@ -909,13 +942,22 @@ class Terminal extends EventEmitter {
  */
 
 Object.assign(Terminal, {
-	/** Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events. */
+	/**
+	 * Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events. 
+	 * @alias module:tty-input.VT200_MOUSE
+	 */
 	VT200_MOUSE: 0,
 
-	/** Constant used for `enableMouse()`: Motion events only when buttons are down. (xterm) */
+	/**
+	 * Constant used for `enableMouse()`: Motion events only when buttons are down.
+	 * @alias module:tty-input.BTN_EVENT_MOUSE
+	 */
 	BTN_EVENT_MOUSE: 2,
 
-	/** Constant used for `enableMouse()`: All events. (xterm) */
+	/**
+	 * Constant used for `enableMouse()`: All events.
+	 * @alias module:tty-input.ANY_EVENT_MOUSE
+	 */
 	ANY_EVENT_MOUSE: 3,
 
 	KeyboardEvent,

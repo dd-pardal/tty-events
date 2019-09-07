@@ -13,9 +13,6 @@ const tests = [
 			name: "a",
 			sequence: "a",
 			isSpecial: false,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -26,9 +23,6 @@ const tests = [
 			name: "ç",
 			sequence: "ç",
 			isSpecial: false,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -39,9 +33,6 @@ const tests = [
 			name: "➀",
 			sequence: "➀",
 			isSpecial: false,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -53,8 +44,6 @@ const tests = [
 			sequence: "\x1b👌",
 			isSpecial: false,
 			alt: true,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -65,9 +54,6 @@ const tests = [
 			name: "😁",
 			sequence: "😁",
 			isSpecial: false,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -78,9 +64,6 @@ const tests = [
 			name: "escape",
 			sequence: "\x1b",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -91,9 +74,6 @@ const tests = [
 			name: "f1",
 			sequence: "\x1b[[A",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -104,9 +84,6 @@ const tests = [
 			name: "f2",
 			sequence: "\x1bOQ",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -117,9 +94,6 @@ const tests = [
 			name: "f3",
 			sequence: "\x1b[R",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -130,9 +104,6 @@ const tests = [
 			name: "f4",
 			sequence: "\x1b[14~",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -143,9 +114,7 @@ const tests = [
 			name: "f5",
 			sequence: "\x1b[15^",
 			isSpecial: true,
-			alt: false,
 			ctrl: true,
-			shift: false
 		})
 	},
 	{
@@ -156,8 +125,6 @@ const tests = [
 			name: "f1",
 			sequence: "\x1b[1;2P",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
 			shift: true
 		})
 	},
@@ -171,7 +138,6 @@ const tests = [
 			isSpecial: true,
 			alt: true,
 			ctrl: true,
-			shift: false
 		})
 	},
 	{
@@ -183,7 +149,6 @@ const tests = [
 			sequence: "\x1b\x1b[18$",
 			isSpecial: true,
 			alt: true,
-			ctrl: false,
 			shift: true
 		})
 	},
@@ -195,9 +160,6 @@ const tests = [
 			name: "home",
 			sequence: "\x1b[1~",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
-			shift: false
 		})
 	},
 	{
@@ -208,8 +170,6 @@ const tests = [
 			name: "insert",
 			sequence: "\x1b[2;2~",
 			isSpecial: true,
-			alt: false,
-			ctrl: false,
 			shift: true
 		})
 	},
@@ -221,9 +181,6 @@ const tests = [
 			x: 1,
 			y: 1,
 			button: 1,
-			alt: false,
-			ctrl: false,
-			shift: false,
 			type: "mousedown"
 		})
 	},
@@ -234,9 +191,6 @@ const tests = [
 		ev: new Terminal.MouseEvent({
 			x: 10,
 			y: 1,
-			alt: false,
-			ctrl: false,
-			shift: false,
 			type: "mouseup"
 		})
 	},
@@ -248,9 +202,6 @@ const tests = [
 			x: 1,
 			y: 5,
 			button: 3,
-			alt: false,
-			ctrl: false,
-			shift: false,
 			type: "mousedown"
 		})
 	},
@@ -261,9 +212,6 @@ const tests = [
 		ev: new Terminal.MouseEvent({
 			x: 160,
 			y: 160,
-			alt: false,
-			ctrl: false,
-			shift: false,
 			type: "mouseup"
 		})
 	},

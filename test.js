@@ -1,4 +1,4 @@
-/* This is the test script for tty-input */
+/* This is the test script for tty-events */
 
 const Terminal = require("./index.js"),
 stream = require("stream"),

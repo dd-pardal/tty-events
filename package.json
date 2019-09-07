@@ -1,5 +1,5 @@
 {
-  "name": "tty-input",
+  "name": "tty-events",
   "version": "0.6.0",
   "description": "A package for handling terminal input (mouse, keyboard and clipboard).",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dd-pardal/tty-input.git"
+    "url": "git://github.com/dd-pardal/tty-events.git"
   },
   "keywords": [
     "tty",

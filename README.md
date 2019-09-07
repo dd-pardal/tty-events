@@ -1,8 +1,6 @@
-# tty-input #
+# tty-events #
 
-_tty-input_ is a fast package for handling input (keyboard, mouse and bracketed paste mode) from the terminal, made for interactive, terminal-based applications.
-
-**Note: This package has been renamed to [`tty-events`](https://github.com/dd-pardal/tty-events). Please use it instead.**
+_tty-events_ is a fast package for handling events from the terminal, made for interactive, terminal-based applications.
 
 ## Features
 
@@ -24,7 +22,7 @@ Here's a simple logger:
 if (process.stdin.isTTY)
 	process.stdin.setRawMode(true);
 
-const term = new (require("tty-input"));
+const term = new (require("tty-events"));
 
 term.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
@@ -36,7 +34,7 @@ term.on("keypress", (key)=>{
 
 ### Mouse
 
-_tty-input_ supports mouse (VT200 and SGR extended). In order to receive mouse events, the [`enableMouse()`](docs.md#module_tty-input--Terminal+enableMouse) function must be called first.
+_tty-events_ supports mouse (VT200 and SGR extended). In order to receive mouse events, the [`enableMouse()`](docs.md#module_tty-events--Terminal+enableMouse) function must be called first.
 
 ```js
 term.enableMouse();
@@ -48,7 +46,7 @@ term.on("mousedown", (ev)=>{
 
 ### Pasting
 
-_tty-input_ supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the [`enableBPM()`](docs.md#module_tty-input--Terminal+enableBPM) function must be called first.
+_tty-events_ supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the [`enableBPM()`](docs.md#module_tty-events--Terminal+enableBPM) function must be called first.
 
 ```js
 term.enableBPM();
@@ -60,7 +58,7 @@ term.on("paste", (text)=>{
 
 ### Focus
 
-Focus events allow an applicatioin to stop updating the screen when it's not necessary. In order to receive paste events, the [`enableFocus()`](docs.md#module_tty-input--Terminal+enableFocus) function must be called first.
+Focus events allow an applicatioin to stop updating the screen when it's not necessary. In order to receive paste events, the [`enableFocus()`](docs.md#module_tty-events--Terminal+enableFocus) function must be called first.
 
 ```js
 term.enableFocus();

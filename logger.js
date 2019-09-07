@@ -1,6 +1,6 @@
 /* Logger Script
  *
- * This is the example logger script for tty-input. Simply type "node logger" in your terminal and
+ * This is the example logger script for tty-events. Simply type "node logger" in your terminal and
  * press some keys, click somewhere, or paste something.
  */
 

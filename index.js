@@ -1,5 +1,5 @@
 /**
- * @module tty-input
+ * @module tty-events
  */
 
 const EventEmitter = require("events");
@@ -9,7 +9,7 @@ const EventEmitter = require("events");
  */
 class KeyboardEvent {
 	/**
-	 * @alias module:tty-input.KeyboardEvent
+	 * @alias module:tty-events.KeyboardEvent
 	 */
 	constructor(
 		{
@@ -77,7 +77,7 @@ class KeyboardEvent {
  */
 class MouseEvent {
 	/**
-	 * @alias module:tty-input.MouseEvent
+	 * @alias module:tty-events.MouseEvent
 	 */
 	constructor({
 		x,
@@ -795,7 +795,7 @@ function* emitKeys(terminal) {
 /**
  * Represents a terminal that emits events.
  * 
- * @alias module:tty-input
+ * @alias module:tty-events
  */
 class Terminal extends EventEmitter {
 	/**
@@ -907,56 +907,56 @@ class Terminal extends EventEmitter {
 /**
  * Event fired when a key (or key combinaion) is pressed.
  * 
- * @event module:tty-input#keypress
+ * @event module:tty-events#keypress
  * @type {KeyboardEvent}
  */
 /**
  * Event fired when a mouse button is pressed down.
  * 
- * @event module:tty-input#mousedown
+ * @event module:tty-events#mousedown
  * @type {MouseEvent}
  */
 /**
  * Event fired when a mouse button is released or when the cursor moves whitout any button currently pressed.
  * 
- * @event module:tty-input#mouseup
+ * @event module:tty-events#mouseup
  * @type {MouseEvent}
  */
 /**
  * Event fired when the cursor moves with one or more buttons currently pressed.
  * 
- * @event module:tty-input#mousemove
+ * @event module:tty-events#mousemove
  * @type {MouseEvent}
  */
 /**
  * Event fired when the mouse wheel is moved or when the scroll action is triggered (for example, using two fingers on a trackpad).
  * 
- * @event module:tty-input#wheel
+ * @event module:tty-events#wheel
  * @type {MouseEvent}
  */
 /**
  * Event fired when text is pasted while bracketed paste mode is activated.
  * 
- * @event module:tty-input#paste
+ * @event module:tty-events#paste
  * @type {string}
  */
 
 Object.assign(Terminal, {
 	/**
 	 * Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events. 
-	 * @alias module:tty-input.VT200_MOUSE
+	 * @alias module:tty-events.VT200_MOUSE
 	 */
 	VT200_MOUSE: 0,
 
 	/**
 	 * Constant used for `enableMouse()`: Motion events only when buttons are down.
-	 * @alias module:tty-input.BTN_EVENT_MOUSE
+	 * @alias module:tty-events.BTN_EVENT_MOUSE
 	 */
 	BTN_EVENT_MOUSE: 2,
 
 	/**
 	 * Constant used for `enableMouse()`: All events.
-	 * @alias module:tty-input.ANY_EVENT_MOUSE
+	 * @alias module:tty-events.ANY_EVENT_MOUSE
 	 */
 	ANY_EVENT_MOUSE: 3,
 

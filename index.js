@@ -74,68 +74,63 @@ class KeyboardEvent {
 
 /**
  * Represents a mouse event (click, wheel, etc.).
+ * @alias module:tty-events.MouseEvent
  */
 class MouseEvent {
 	/**
 	 * @alias module:tty-events.MouseEvent
 	 */
-	constructor({
-		x,
-		y,
-		button,
-		ctrl = false,
-		alt = false,
-		shift = false,
-		type
-	}) {
+	constructor(opts) {
+		Object.assign(this, opts)
+
 		/**
 		 * The x coordinate of where the mouse event happened. (1 = leftmost column.)
 		 * 
+		 * @name module:tty-events.MouseEvent#x
 		 * @type {number}
 		 */
-		this.x = x;
-
 		/** 
 		 * The y coordinate of where the mouse event happened. (1 = topmost row.)
 		 * 
+		 * @name module:tty-events.MouseEvent#y
 		 * @type {number}
 		 */
-		this.y = y;
-
 		/**
-		 * The button number. This property might be absent for `mouseup` events.
+		 * The button number. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
 		 * 
+		 * @name module:tty-events.MouseEvent#button
 		 * @type {number}
 		 */
-		this.button = button;
-
 		/**
 		 * Determines if the Ctrl modifier was being pressed when the mouse event occured.
 		 * 
+		 * @name module:tty-events.MouseEvent#ctrl
 		 * @type {boolean}
 		 */
-		this.ctrl = ctrl;
-
 		/**
 		 * Determines if the Alt modifier was being pressed when the mouse event occured.
 		 * 
+		 * @name module:tty-events.MouseEvent#alt
 		 * @type {boolean}
 		 */
-		this.alt = alt;
-
 		/**
 		 * Determines if the Shift modifier was being pressed when the mouse event occured.
 		 * 
+		 * @name module:tty-events.MouseEvent#shift
 		 * @type {boolean}
 		 */
-		this.shift = shift;
-
 		/**
 		 * Type of mouse event (`mousedown`, `mouseup`, `mousemove` or `wheel`).
 		 * 
+		 * @name module:tty-events.MouseEvent#type
 		 * @type {string}
 		 */
-		this.type = type;
+		/**
+		 * Direction of the wheel turn (1=down; -1=up).
+		 * 
+		 * @name module:tty-events.MouseEvent#direction
+		 * @type {number}
+		 */
 	}
 }
 
@@ -207,33 +202,37 @@ function* emitKeys(terminal) {
 
 		button += 1;
 
-		switch (button) {
-			case 4:
-				evType = "mouseup";
-				break;
+		//> On button-motion events, xterm adds 32 to the event code (the third character, Cb).
+		if (b & 32) {
+			evType = "mousemove";
 
-			case 5:
-				evType = "wheel";
-				evOpts.direction = -1;
-				break;
-
-			case 6:
-				evType = "wheel";
-				evOpts.direction = 1;
-				break;
-			
-			default:
-				//> On button-motion events, xterm adds 32 to the event code (the third character, Cb).
-				if (b & 32)
-					evType = "mousemove";
-				else if (mouseUp)
+			evOpts.button = button===4? undefined:button;
+		} else {
+			switch (button) {
+				case 4:
 					evType = "mouseup";
-				else
-					evType = "mousedown";
+					evOpts.button = undefined;
+					break;
 
-				evOpts.button = button;
-				break;
+				case 5:
+					evType = "wheel";
+					evOpts.direction = -1;
+					break;
 
+				case 6:
+					evType = "wheel";
+					evOpts.direction = 1;
+					break;
+				
+				default:
+					if (mouseUp)
+						evType = "mouseup";
+					else
+						evType = "mousedown";
+
+					evOpts.button = button;
+					break;
+			}
 		}
 
 
@@ -917,13 +916,13 @@ class Terminal extends EventEmitter {
  * @type {MouseEvent}
  */
 /**
- * Event fired when a mouse button is released or when the cursor moves whitout any button currently pressed.
+ * Event fired when a mouse button is released.
  * 
  * @event module:tty-events#mouseup
  * @type {MouseEvent}
  */
 /**
- * Event fired when the cursor moves with one or more buttons currently pressed.
+ * Event fired when the cursor moves.
  * 
  * @event module:tty-events#mousemove
  * @type {MouseEvent}
@@ -932,6 +931,12 @@ class Terminal extends EventEmitter {
  * Event fired when the mouse wheel is moved or when the scroll action is triggered (for example, using two fingers on a trackpad).
  * 
  * @event module:tty-events#wheel
+ * @type {MouseEvent}
+ */
+/**
+ * Event fired with any mouse event. (Use `mouseEvent.type` to know the event type.)
+ * 
+ * @event module:tty-events#mousemove
  * @type {MouseEvent}
  */
 /**

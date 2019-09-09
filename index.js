@@ -309,6 +309,9 @@ function* emitKeys(terminal) {
 
 		if (escaped && (ch === 'O' || ch === '[')) {
 			// Escape sequence
+			/**
+			 * The processed code (without modifier).
+			 */
 			let code = ch;
 			let modifier = 0;
 
@@ -333,10 +336,10 @@ function* emitKeys(terminal) {
 				// ESC [ modifier letter
 				// ESC [ [ modifier letter
 				// ESC [ [ num char
+				const seqStart = s.length;
 				s += (ch = yield);
 
-				if (ch === "M") {
-					// MOUSE
+				if (ch === "M") { // MOUSE
 					parseAndEmitMouse(
 						(yield).charCodeAt(0) - 0x20,
 						(yield).charCodeAt(0) - 0x20,
@@ -405,10 +408,11 @@ function* emitKeys(terminal) {
 					}
 				}
 
-				const lastChar = s[s.length-1];
+				// We buffered enough data.
+				const seq = s.slice(seqStart);
 
 				// CSI sequences might not represent a key.
-				if (s[2] === "<" && (lastChar==="M" || lastChar==="m")) { // SGR MOUSE
+				if (seq[0] === "<" && (ch==="M" || ch==="m")) { // SGR MOUSE
 
 					const args = s.slice(3, s.length-1).split(";");
 
@@ -417,23 +421,23 @@ function* emitKeys(terminal) {
 							parseInt(args[0]),
 							parseInt(args[1]),
 							parseInt(args[2]),
-							lastChar === "m"
+							ch === "m"
 						);
 
 						ch = yield;
 						continue;
 					}
-				} else if (s[2] === "I") { // FOCUS IN
+				} else if (seq[0] === "I") { // FOCUS IN
 					terminal.emit("focusin");
 
 					ch = yield;
 					continue;
-				} else if (s[2] === "O") { // FOCUS OUT
+				} else if (seq[0] === "O") { // FOCUS OUT
 					terminal.emit("focusout");
 					
 					ch = yield;
 					continue;
-				} else if (s === "\x1b[200~") { // BRACKETED PASTE MODE
+				} else if (seq === "200~") { // BRACKETED PASTE MODE
 
 					// Loop until a ESC [ 2 0 1 ~ is recieved.
 					const endSeq = "\x1b[201~";
@@ -458,10 +462,7 @@ function* emitKeys(terminal) {
 					}
 				}
 
-				/*
-				 * We buffered enough data, now trying to extract code
-				 * and modifier from it
-				 */
+				// Now trying to extract code and modifier from it.
 				const cmd = s.slice(cmdStart);
 				let match;
 
@@ -800,6 +801,7 @@ class Terminal extends EventEmitter {
 	/**
 	 * @param {ReadableStream} input The input stream. (Normally stdin.)
 	 * @param {WritableStream} output The output stream for activating mouse support and bracketed paste mode. (Normally stdout.) Optional.
+	 * @param {number} escKeyTimeout The escape key timeout, in millisseconds. A value of 
 	 */
 	constructor(input = process.stdin, output, {escKeyTimeout = 500} = {}) {
 		super()

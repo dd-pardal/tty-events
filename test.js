@@ -57,6 +57,28 @@ const tests = [
 		})
 	},
 	{
+		name: "Ctrl+A",
+		sequence: "\x01",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "a",
+			sequence: "\x01",
+			isSpecial: true,
+			ctrl: true
+		})
+	},
+	{
+		name: "Ctrl+-",
+		sequence: "\x1f",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "-",
+			sequence: "\x1f",
+			isSpecial: true,
+			ctrl: true
+		})
+	},
+	{
 		name: "Esc",
 		sequence: "\x1b",
 		type: "keypress",
@@ -181,7 +203,10 @@ const tests = [
 			x: 1,
 			y: 1,
 			button: 1,
-			type: "mousedown"
+			type: "mousedown",
+			ctrl: false,
+			alt: false,
+			shift: false
 		})
 	},
 	{
@@ -191,18 +216,39 @@ const tests = [
 		ev: new Terminal.MouseEvent({
 			x: 10,
 			y: 1,
-			type: "mouseup"
+			button: undefined,
+			type: "mouseup",
+			ctrl: false,
+			alt: false,
+			shift: false
 		})
 	},
 	{
-		name: "Click right (1, 5)",
+		name: "Mousedown right (1, 5)",
 		sequence: "\x1b[M\"!%",
 		type: "mousedown",
 		ev: new Terminal.MouseEvent({
 			x: 1,
 			y: 5,
 			button: 3,
-			type: "mousedown"
+			type: "mousedown",
+			ctrl: false,
+			alt: false,
+			shift: false
+		})
+	},
+	{
+		name: "Wheel up (80, 96)",
+		sequence: [0x1b, 0x5b, 0x4d, 0x60, 0x70, 0x80],
+		type: "wheel",
+		ev: new Terminal.MouseEvent({
+			x: 80,
+			y: 96,
+			direction: -1,
+			type: "wheel",
+			ctrl: false,
+			alt: false,
+			shift: false
 		})
 	},
 	{
@@ -212,7 +258,39 @@ const tests = [
 		ev: new Terminal.MouseEvent({
 			x: 160,
 			y: 160,
-			type: "mouseup"
+			button: undefined,
+			type: "mouseup",
+			ctrl: false,
+			alt: false,
+			shift: false
+		})
+	},
+	{
+		name: "Mousemove left (56, 36)",
+		sequence: "\x1b[M@XD",
+		type: "mousemove",
+		ev: new Terminal.MouseEvent({
+			x: 56,
+			y: 36,
+			button: 1,
+			type: "mousemove",
+			ctrl: false,
+			alt: false,
+			shift: false
+		})
+	},
+	{
+		name: "Mousemove (12, 34)",
+		sequence: "\x1b[MC,B",
+		type: "mousemove",
+		ev: new Terminal.MouseEvent({
+			x: 12,
+			y: 34,
+			button: undefined,
+			type: "mousemove",
+			ctrl: false,
+			alt: false,
+			shift: false
 		})
 	},
 ];

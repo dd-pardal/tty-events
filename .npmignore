@@ -3,3 +3,7 @@
 
 # Examples
 /logger.js
+
+# Misc
+/.vscode
+/.gitignore

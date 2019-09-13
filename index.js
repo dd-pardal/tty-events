@@ -4,12 +4,11 @@
 
 const EventEmitter = require("events");
 
-/**
- * @classdesc Represents a keyboard event (key or key combination).
- */
 class KeyboardEvent {
 	/**
+	 * @classdesc Represents a keyboard event (key or key combination).
 	 * @alias module:tty-events.KeyboardEvent
+	 * @hideconstructor
 	 */
 	constructor(
 		{
@@ -72,12 +71,10 @@ class KeyboardEvent {
 	}
 }
 
-/**
- * @classdesc Represents a mouse event (click, wheel, etc.).
- * @alias module:tty-events.MouseEvent
- */
 class MouseEvent {
 	/**
+	 * @classdesc Represents a mouse event (click, wheel, etc.).
+	 * @hideconstructor
 	 * @alias module:tty-events.MouseEvent
 	 */
 	constructor(opts) {
@@ -169,7 +166,7 @@ class MouseEvent {
 /**
  * A generator function that accepts characters from the input stream as inputs to `iterator.next()` and emmits the events.
  * 
- * @param {Terminal} term
+ * @param {module:tty-input} term
  * @private
  */
 function* emitKeys(term) {
@@ -340,10 +337,20 @@ function* emitKeys(term) {
 				s += (ch = yield);
 
 				if (ch === "M") { // MOUSE
+					for (let i=0; i<3; i++) {
+						ch = yield;
+						if (ch === "") {
+							term.emit("unknownSequence", s);
+							ch = yield;
+							continue main;
+						}
+						s += ch;
+					}
+
 					parseAndEmitMouse(
-						(yield).charCodeAt(0) - 0x20,
-						(yield).charCodeAt(0) - 0x20,
-						(yield).charCodeAt(0) - 0x20
+						s[seqStart+1].charCodeAt(0) - 0x20,
+						s[seqStart+2].charCodeAt(0) - 0x20,
+						s[seqStart+3].charCodeAt(0) - 0x20
 					);
 
 					ch = yield;

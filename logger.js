@@ -4,12 +4,10 @@
  * press some keys, click somewhere, or paste something.
  */
 
-const Terminal = require("./index.js");
+const te = new (require("./index.min.js"))();
 
 if (process.stdin.isTTY)
 	process.stdin.setRawMode(true);
-
-const te = new Terminal;
 
 function dataListener(data) {
 	var str = "";

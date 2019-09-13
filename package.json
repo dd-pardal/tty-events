@@ -1,10 +1,13 @@
 {
   "name": "tty-events",
   "version": "0.6.2",
-  "description": "A package for handling terminal input (mouse, keyboard and clipboard).",
-  "main": "index.js",
+  "description": "A package for handling terminal input (mouse, keyboard, clipboard and focus).",
+  "main": "index.min.js",
   "scripts": {
-    "test": "node test.js"
+	"test": "node test.js",
+	"docs": "npx jsdoc2md index.js -d 1 > docs.md",
+	"minify": "npx terser -m --top-level -o index.min.js index.js",
+	"prepublishOnly": "npm run test && npm run docs && npm run minify"
   },
   "repository": {
     "type": "git",
@@ -16,12 +19,14 @@
     "keypress",
     "mouse",
     "clipboard",
-    "paste",
-    "unicode"
+	"bracketed-paste-mode",
+	"focus",
+    "utf8"
   ],
   "author": "dd.pardal",
   "license": "MIT",
   "devDependencies": {
-    "jsdoc-to-markdown": "^5.0.1"
+	"jsdoc-to-markdown": "^5.0.1",
+	"terser": "^4.3.1"
   }
 }

@@ -1,6 +1,6 @@
 /* This is the test script for tty-events */
 
-const Terminal = require("./index.js"),
+const Terminal = require("./index.min.js"),
 stream = require("stream"),
 assert = require("assert");
 

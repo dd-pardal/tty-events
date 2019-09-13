@@ -293,6 +293,52 @@ const tests = [
 			shift: false
 		})
 	},
+	{
+		name: "Mousedown left (1, 1)",
+		sequence: "\x1b[<0;1;1M",
+		type: "mousedown",
+		ev: new Terminal.MouseEvent({
+			x: 1,
+			y: 1,
+			button: 1,
+			type: "mousedown",
+			ctrl: false,
+			alt: false,
+			shift: false
+		})
+	},
+	{
+		name: "Mouseup left (10, 1)",
+		sequence: "\x1b[<3;10;1m",
+		type: "mouseup",
+		ev: new Terminal.MouseEvent({
+			x: 10,
+			y: 1,
+			button: undefined,
+			type: "mouseup",
+			ctrl: false,
+			alt: false,
+			shift: false
+		})
+	},
+	{
+		name: "Paste",
+		sequence: "\x1b[200~Text\x1b[201~",
+		type: "paste",
+		ev: "Text"
+	},
+	{
+		name: "Focus in",
+		sequence: "\x1b[I",
+		type: "focusin",
+		ev: undefined
+	},
+	{
+		name: "Focus out",
+		sequence: "\x1b[O",
+		type: "focusout",
+		ev: undefined
+	},
 ];
 
 // Actual code //

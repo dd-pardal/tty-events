@@ -106,4 +106,4 @@ Also, some features and/or key combinations don't work in some terminal emulator
 
 ## Documentation
 
-The full documentation is available [here](docs.md).
+The full documentation is available [here](https://github.com/dd-pardal/tty-events/blob/master/docs.md).

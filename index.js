@@ -5,7 +5,7 @@
 const EventEmitter = require("events");
 
 /**
- * Represents a keyboard event (key or key combination).
+ * @classdesc Represents a keyboard event (key or key combination).
  */
 class KeyboardEvent {
 	/**
@@ -73,7 +73,7 @@ class KeyboardEvent {
 }
 
 /**
- * Represents a mouse event (click, wheel, etc.).
+ * @classdesc Represents a mouse event (click, wheel, etc.).
  * @alias module:tty-events.MouseEvent
  */
 class MouseEvent {
@@ -82,57 +82,57 @@ class MouseEvent {
 	 */
 	constructor(opts) {
 		Object.assign(this, opts)
-
-		/**
-		 * The x coordinate of where the mouse event happened. (1 = leftmost column.)
-		 * 
-		 * @name module:tty-events.MouseEvent#x
-		 * @type {number}
-		 */
-		/** 
-		 * The y coordinate of where the mouse event happened. (1 = topmost row.)
-		 * 
-		 * @name module:tty-events.MouseEvent#y
-		 * @type {number}
-		 */
-		/**
-		 * The button number. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
-		 * 
-		 * @name module:tty-events.MouseEvent#button
-		 * @type {number}
-		 */
-		/**
-		 * Determines if the Ctrl modifier was being pressed when the mouse event occured.
-		 * 
-		 * @name module:tty-events.MouseEvent#ctrl
-		 * @type {boolean}
-		 */
-		/**
-		 * Determines if the Alt modifier was being pressed when the mouse event occured.
-		 * 
-		 * @name module:tty-events.MouseEvent#alt
-		 * @type {boolean}
-		 */
-		/**
-		 * Determines if the Shift modifier was being pressed when the mouse event occured.
-		 * 
-		 * @name module:tty-events.MouseEvent#shift
-		 * @type {boolean}
-		 */
-		/**
-		 * Type of mouse event (`mousedown`, `mouseup`, `mousemove` or `wheel`).
-		 * 
-		 * @name module:tty-events.MouseEvent#type
-		 * @type {string}
-		 */
-		/**
-		 * Direction of the wheel turn (1=down; -1=up).
-		 * 
-		 * @name module:tty-events.MouseEvent#direction
-		 * @type {number}
-		 */
 	}
 }
+/**
+ * The x coordinate of where the mouse event happened. (1 = leftmost column.)
+ * 
+ * @name module:tty-events.MouseEvent#x
+ * @type {number}
+ */
+/** 
+ * The y coordinate of where the mouse event happened. (1 = topmost row.)
+ * 
+ * @name module:tty-events.MouseEvent#y
+ * @type {number}
+ */
+/**
+ * The button number. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
+ * 
+ * @name module:tty-events.MouseEvent#button
+ * @type {number}
+ */
+/**
+ * Determines if the Ctrl modifier was being pressed when the mouse event occured.
+ * 
+ * @name module:tty-events.MouseEvent#ctrl
+ * @type {boolean}
+ */
+/**
+ * Determines if the Alt modifier was being pressed when the mouse event occured.
+ * 
+ * @name module:tty-events.MouseEvent#alt
+ * @type {boolean}
+ */
+/**
+ * Determines if the Shift modifier was being pressed when the mouse event occured.
+ * 
+ * @name module:tty-events.MouseEvent#shift
+ * @type {boolean}
+ */
+/**
+ * Type of mouse event (`mousedown`, `mouseup`, `mousemove` or `wheel`).
+ * 
+ * @name module:tty-events.MouseEvent#type
+ * @type {string}
+ */
+/**
+* Only for `wheel` events. Direction of the wheel turn (1=down; -1=up).
+* 
+* @name module:tty-events.MouseEvent#direction
+* @type {number}
+*/
+
 
 /*******************************************************************************\
 |  Below is modified code from the node repository.                             |
@@ -169,12 +169,10 @@ class MouseEvent {
 /**
  * A generator function that accepts characters from the input stream as inputs to `iterator.next()` and emmits the events.
  * 
- * The return value of `iterator.next()` indicates if indicates if the next call to `iterator.next()` should send a Unicode character or a byte.
- * 
- * @param {Terminal} terminal
+ * @param {Terminal} term
  * @private
  */
-function* emitKeys(terminal) {
+function* emitKeys(term) {
 	/**
 	 * @param {number} b The encoded button value
 	 * @param {number} x The x coordinate of the event
@@ -182,7 +180,7 @@ function* emitKeys(terminal) {
 	 * @param {boolean} mouseUp If it is a mouseup event (used by SGR).
 	 */
 	function parseAndEmitMouse(b, x, y, mouseUp = false) {
-		if (b<0 || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y))
+		if (b<0 || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y)) // Sometives rxvt sends mouse sequences with negative coordinates.
 			return;
 
 		/* Quotes (indicated by "//>") are from <https://invisible-island.net/xterm/ctlseqs/ctlseqs.pdf> */
@@ -246,8 +244,8 @@ function* emitKeys(terminal) {
 
 		evOpts.type = evType;
 
-		terminal.emit(evType, new MouseEvent(evOpts));
-		terminal.emit("mouse", new MouseEvent(evOpts));
+		term.emit(evType, new MouseEvent(evOpts));
+		term.emit("mouse", new MouseEvent(evOpts));
 	}
 
 	/**
@@ -266,8 +264,10 @@ function* emitKeys(terminal) {
 	s;
 
 	main: while (true) {
-		// if (ch === "")
-		// 	continue;
+		if (ch === "") {
+			ch = yield;
+			continue;
+		}
 
 		s = ch;
 
@@ -292,7 +292,7 @@ function* emitKeys(terminal) {
 			}
 
 			if (ch === "" || (s.length > 1 && ch === "\x1b")) { // ESC [ESC] timeout *or* ESC ESC ESC
-				terminal.emit("keypress", new KeyboardEvent({
+				term.emit("keypress", new KeyboardEvent({
 					name: "escape",
 					sequence: s,
 					isSpecial: true
@@ -403,6 +403,7 @@ function* emitKeys(terminal) {
 
 					} else {
 						// The sequence is broken.
+						term.emit("unknownSequence", s);
 						continue main;
 						
 					}
@@ -412,54 +413,64 @@ function* emitKeys(terminal) {
 				const seq = s.slice(seqStart);
 
 				// CSI sequences might not represent a key.
-				if (seq[0] === "<" && (ch==="M" || ch==="m")) { // SGR MOUSE
-
-					const args = s.slice(3, s.length-1).split(";");
-
-					if (args.length === 3) {
-						parseAndEmitMouse(
-							parseInt(args[0]),
-							parseInt(args[1]),
-							parseInt(args[2]),
-							ch === "m"
-						);
-
-						ch = yield;
-						continue;
+				if (
+					(seq[0] === "<" && (ch==="M" || ch==="m")) ||
+					seq[0] === "I" ||
+					seq[0] === "O" ||
+					seq === "200~"
+				) {
+					/* These sequences should not be preceded with an extra ESC.
+					 * If that happens, it's probably because the Esc key was pressed.
+					 */
+					if (escaped >= 2) {
+						term.emit("keypress", new Key({name: "escape", isSpecial: true}))
 					}
-				} else if (seq[0] === "I") { // FOCUS IN
-					terminal.emit("focusin");
 
-					ch = yield;
-					continue;
-				} else if (seq[0] === "O") { // FOCUS OUT
-					terminal.emit("focusout");
-					
-					ch = yield;
-					continue;
-				} else if (seq === "200~") { // BRACKETED PASTE MODE
+					if (seq[0] === "<" && (ch==="M" || ch==="m")) { // SGR MOUSE
 
-					// Loop until a ESC [ 2 0 1 ~ is recieved.
-					const endSeq = "\x1b[201~";
-					let byteStr = "", endSeqIndex = 0;
-					while (true) {
-						byteStr += (ch = yield);
+						const args = s.slice(3, s.length-1).split(";");
 
-						if (ch === endSeq[endSeqIndex])
-							endSeqIndex++;
-						else
-							endSeqIndex = 0;
+						if (args.length === 3) {
+							parseAndEmitMouse(
+								parseInt(args[0]),
+								parseInt(args[1]),
+								parseInt(args[2]),
+								ch === "m"
+							);
+						}
+					} else if (seq[0] === "I") { // FOCUS IN
+						term.emit("focusin");
 
-						if (endSeqIndex >= endSeq.length) {
-							// A ESC [ 2 0 1 ~ was received.
-							
-							// Here we use the built-in UTF-8 decoder.
-							terminal.emit("paste", Buffer.from(byteStr.slice(0, byteStr.length - endSeq.length), "binary").toString("utf-8"))
+					} else if (seq[0] === "O") { // FOCUS OUT
+						term.emit("focusout");
 
-							ch = yield;
-							continue main;
+					} else if (seq === "200~") { // BRACKETED PASTE MODE
+
+						// Loop until a ESC [ 2 0 1 ~ is recieved.
+						const endSeq = "\x1b[201~";
+						let byteStr = "", endSeqIndex = 0;
+						while (true) {
+							byteStr += (ch = yield);
+
+							if (ch === endSeq[endSeqIndex])
+								endSeqIndex++;
+							else
+								endSeqIndex = 0;
+
+							if (endSeqIndex >= endSeq.length) {
+								// A ESC [ 2 0 1 ~ was received.
+								
+								// Here we use the built-in UTF-8 decoder.
+								term.emit("paste", Buffer.from(byteStr.slice(0, byteStr.length - endSeq.length), "binary").toString("utf-8"))
+
+								break;
+							}
 						}
 					}
+
+						
+					ch = yield;
+					continue;
 				}
 
 				// Now trying to extract code and modifier from it.
@@ -475,19 +486,7 @@ function* emitKeys(terminal) {
 				} else {
 					code += cmd;
 				}
-			}
 
-			// Parse the key modifier
-			key.ctrl = Boolean(modifier & 4);
-			key.alt = Boolean(modifier & 10);
-			key.shift = Boolean(modifier & 1);
-
-			if (escaped >= 2) {
-				// Double-escaped sequences usually mean that the Alt key was being pressed.
-				key.alt = true;
-			}
-		
-			if (code[0] === "[") {
 				/* The ending char of the code indicates modifiers in some terminals.
 				 * Here, the ending char is parsed and replaced by `~`.
 				 */
@@ -506,12 +505,22 @@ function* emitKeys(terminal) {
 						key.shift = key.ctrl = true;
 						code = code.slice(0, code.length-1)+"~";
 						break;
-					}
 				}
+			}
 
-			// Parse the key itself
+			// Parse the key modifier
+			key.ctrl = key.ctrl || Boolean(modifier & 4);
+			key.alt = Boolean(modifier & 10);
+			key.shift = key.shift || Boolean(modifier & 1);
+
+			if (escaped >= 2) {
+				// Double-escaped sequences usually mean that the Alt key was being pressed.
+				key.alt = true;
+			}
+		
+			// Parse the key code
 			if (code.match(/^(O|\[)[A-Z]$/)) {
-				// ESC O letter and ESC [ letter are equivalent for uppercase.
+				// ESC O letter and ESC [ letter are equivalent.
 
 				switch (code[1]) {
 					/* xterm/gnome */
@@ -602,10 +611,10 @@ function* emitKeys(terminal) {
 			key.sequence = s;
 
 			if (key.name !== undefined) {
-				terminal.emit("keypress", new KeyboardEvent(key))
+				term.emit("keypress", new KeyboardEvent(key))
 			} else {
 				/* Unrecognized escape sequence */
-				terminal.emit("unknownSequence", s)
+				term.emit("unknownSequence", s)
 			}
 
 			ch = yield;
@@ -775,11 +784,7 @@ function* emitKeys(terminal) {
 			}
 		}
 
-		if (key.name !== undefined) {
-			terminal.emit("keypress", new KeyboardEvent(key))
-		} else {
-			// This should never happen
-		}
+		term.emit("keypress", new KeyboardEvent(key))
 
 		lastCharWasCR = ch === "\r";
 
@@ -793,6 +798,11 @@ function* emitKeys(terminal) {
 
 
 /**
+ * @typedef TermOptions
+ * @property {number} timeout=500 The escape sequence timeout timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
+ */
+
+/**
  * Represents a terminal that emits events.
  * 
  * @alias module:tty-events
@@ -801,43 +811,45 @@ class Terminal extends EventEmitter {
 	/**
 	 * @param {ReadableStream} input The input stream. (Normally stdin.)
 	 * @param {WritableStream} output The output stream for activating mouse support and bracketed paste mode. (Normally stdout.) Optional.
-	 * @param {number} escKeyTimeout The escape key timeout, in millisseconds. A value of 
+	 * @param {TermOptions} options
 	 */
-	constructor(input = process.stdin, output, {escKeyTimeout = 500} = {}) {
+	constructor(input = process.stdin, output, {
+		escKeyTimeout = 500,
+		timeout = escKeyTimeout
+	} = {}) {
 		super()
 
 		const iterator = emitKeys(this);
 		iterator.next();
 
 		this._dataListener = (buf) => {
-			if (this._escKeyTimeoutID) {
-				clearTimeout(this._escKeyTimeoutID)
-			}
-
 			buf = buf.toString("binary"); // 1 byte = 1 character
 		
 			for (let i=0; i<buf.length; i++) {
 				iterator.next(buf[i]);
 			}
 		
-			if (buf[buf.length-1] === "\x1b") {
-				// Escape Timeout
-				//
-				// Because the escape key sends ESC, there's no way to distinguish it form
-				// the start of an escape sequence.
-		
-				this._escKeyTimeoutID = setTimeout(()=>{
-					this._escKeyTimeoutID = undefined;
+			// Escape Timeout
+			//
+			// Because the escape key sends ESC, there's no way to distinguish it form
+			// the start of an escape sequence.
+			if (this._timeoutID) {
+				clearTimeout(this._timeoutID)
+			}
+	
+			if (this.timeout !== Infinity) {
+				this._timeoutID = setTimeout(()=>{
+					this._timeoutID = undefined;
 					iterator.next(""); // When the timeout fires, an empty string is sent to the generator function.
-				}, this.escKeyTimeout);
+				}, this.timeout);
 			}
 		}
 
 
 		this._input = input;
 		this.output = output || (input === process.stdin? process.stdout:null);
-		this.escKeyTimeout = escKeyTimeout;
-		this._escKeyTimeoutID = undefined;
+		this.timeout = timeout;
+		this._timeoutID = undefined;
 
 		this.resume();
 	}
@@ -936,9 +948,10 @@ class Terminal extends EventEmitter {
  * @type {MouseEvent}
  */
 /**
- * Event fired with any mouse event. (Use `mouseEvent.type` to know the event type.)
+ * Event fired with any mouse event.
  * 
- * @event module:tty-events#mousemove
+ * @see module:tty-events.MouseEvent#type
+ * @event module:tty-events#mouse
  * @type {MouseEvent}
  */
 /**
@@ -951,18 +964,23 @@ class Terminal extends EventEmitter {
  * Event fired when the terminal window receives focus.
  * 
  * @event module:tty-events#focusin
- * @type {string}
  */
 /**
  * Event fired when the terminal window loses focus.
  * 
  * @event module:tty-events#focusout
+ */
+/**
+ * Event fired when the terminal receives an unrecognized or broken escape sequence.
+ * 
+ * @event module:tty-events#unknownSequence
  * @type {string}
  */
 
 Object.assign(Terminal, {
 	/**
-	 * Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events. 
+	 * Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events.
+	 * @const
 	 * @alias module:tty-events.VT200_MOUSE
 	 */
 	VT200_MOUSE: 0,
@@ -970,12 +988,14 @@ Object.assign(Terminal, {
 	/**
 	 * Constant used for `enableMouse()`: Motion events only when buttons are down.
 	 * @alias module:tty-events.BTN_EVENT_MOUSE
+	 * @const
 	 */
 	BTN_EVENT_MOUSE: 2,
 
 	/**
 	 * Constant used for `enableMouse()`: All events.
 	 * @alias module:tty-events.ANY_EVENT_MOUSE
+	 * @const
 	 */
 	ANY_EVENT_MOUSE: 3,
 

@@ -4,7 +4,7 @@
 
 * [tty-events](#module_tty-events)
     * [Terminal](#exp_module_tty-events--Terminal) ⏏
-        * [new Terminal(input, output)](#new_module_tty-events--Terminal_new)
+        * [new Terminal(input, output, options)](#new_module_tty-events--Terminal_new)
         * _instance_
             * [.pause()](#module_tty-events--Terminal+pause)
             * [.resume()](#module_tty-events--Terminal+resume)
@@ -19,10 +19,11 @@
             * ["mouseup"](#module_tty-events--Terminal+event_mouseup)
             * ["mousemove"](#module_tty-events--Terminal+event_mousemove)
             * ["wheel"](#module_tty-events--Terminal+event_wheel)
-            * ["mousemove"](#module_tty-events--Terminal+event_mousemove)
+            * ["mouse"](#module_tty-events--Terminal+event_mouse)
             * ["paste"](#module_tty-events--Terminal+event_paste)
             * ["focusin"](#module_tty-events--Terminal+event_focusin)
             * ["focusout"](#module_tty-events--Terminal+event_focusout)
+            * ["unknownSequence"](#module_tty-events--Terminal+event_unknownSequence)
         * _static_
             * [.KeyboardEvent](#module_tty-events--Terminal..KeyboardEvent)
                 * [.name](#module_tty-events--Terminal..KeyboardEvent+name) : <code>string</code>
@@ -33,9 +34,19 @@
                 * [.shift](#module_tty-events--Terminal..KeyboardEvent+shift) : <code>boolean</code>
                 * [.toString()](#module_tty-events--Terminal..KeyboardEvent+toString)
             * [.MouseEvent](#module_tty-events--Terminal.MouseEvent)
+                * [.x](#module_tty-events--Terminal.MouseEvent+x) : <code>number</code>
+                * [.y](#module_tty-events--Terminal.MouseEvent+y) : <code>number</code>
+                * [.button](#module_tty-events--Terminal.MouseEvent+button) : <code>number</code>
+                * [.ctrl](#module_tty-events--Terminal.MouseEvent+ctrl) : <code>boolean</code>
+                * [.alt](#module_tty-events--Terminal.MouseEvent+alt) : <code>boolean</code>
+                * [.shift](#module_tty-events--Terminal.MouseEvent+shift) : <code>boolean</code>
+                * [.type](#module_tty-events--Terminal.MouseEvent+type) : <code>string</code>
+                * [.direction](#module_tty-events--Terminal.MouseEvent+direction) : <code>number</code>
             * [.VT200_MOUSE](#module_tty-events--Terminal.VT200_MOUSE)
             * [.BTN_EVENT_MOUSE](#module_tty-events--Terminal.BTN_EVENT_MOUSE)
             * [.ANY_EVENT_MOUSE](#module_tty-events--Terminal.ANY_EVENT_MOUSE)
+        * _inner_
+            * [~TermOptions](#module_tty-events--Terminal..TermOptions)
 
 <a name="exp_module_tty-events--Terminal"></a>
 
@@ -45,12 +56,13 @@ Represents a terminal that emits events.
 **Kind**: Exported class  
 <a name="new_module_tty-events--Terminal_new"></a>
 
-#### new Terminal(input, output)
+#### new Terminal(input, output, options)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | input | <code>ReadableStream</code> | The input stream. (Normally stdin.) |
 | output | <code>WritableStream</code> | The output stream for activating mouse support and bracketed paste mode. (Normally stdout.) Optional. |
+| options | <code>TermOptions</code> |  |
 
 <a name="module_tty-events--Terminal+pause"></a>
 
@@ -136,12 +148,13 @@ Event fired when the cursor moves.
 Event fired when the mouse wheel is moved or when the scroll action is triggered (for example, using two fingers on a trackpad).
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
-<a name="module_tty-events--Terminal+event_mousemove"></a>
+<a name="module_tty-events--Terminal+event_mouse"></a>
 
-#### "mousemove"
-Event fired with any mouse event. (Use `mouseEvent.type` to know the event type.)
+#### "mouse"
+Event fired with any mouse event.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+**See**: module:tty-events.MouseEvent#type  
 <a name="module_tty-events--Terminal+event_paste"></a>
 
 #### "paste"
@@ -158,6 +171,12 @@ Event fired when the terminal window receives focus.
 
 #### "focusout"
 Event fired when the terminal window loses focus.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+<a name="module_tty-events--Terminal+event_unknownSequence"></a>
+
+#### "unknownSequence"
+Event fired when the terminal receives an unrecognized or broken escape sequence.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal..KeyboardEvent"></a>
@@ -224,21 +243,90 @@ Represents the key combination with a string in the format `["Ctrl+"]["Alt+"]["S
 Represents a mouse event (click, wheel, etc.).
 
 **Kind**: static class of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+
+* [.MouseEvent](#module_tty-events--Terminal.MouseEvent)
+    * [.x](#module_tty-events--Terminal.MouseEvent+x) : <code>number</code>
+    * [.y](#module_tty-events--Terminal.MouseEvent+y) : <code>number</code>
+    * [.button](#module_tty-events--Terminal.MouseEvent+button) : <code>number</code>
+    * [.ctrl](#module_tty-events--Terminal.MouseEvent+ctrl) : <code>boolean</code>
+    * [.alt](#module_tty-events--Terminal.MouseEvent+alt) : <code>boolean</code>
+    * [.shift](#module_tty-events--Terminal.MouseEvent+shift) : <code>boolean</code>
+    * [.type](#module_tty-events--Terminal.MouseEvent+type) : <code>string</code>
+    * [.direction](#module_tty-events--Terminal.MouseEvent+direction) : <code>number</code>
+
+<a name="module_tty-events--Terminal.MouseEvent+x"></a>
+
+##### mouseEvent.x : <code>number</code>
+The x coordinate of where the mouse event happened. (1 = leftmost column.)
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+y"></a>
+
+##### mouseEvent.y : <code>number</code>
+The y coordinate of where the mouse event happened. (1 = topmost row.)
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+button"></a>
+
+##### mouseEvent.button : <code>number</code>
+The button number. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+ctrl"></a>
+
+##### mouseEvent.ctrl : <code>boolean</code>
+Determines if the Ctrl modifier was being pressed when the mouse event occured.
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+alt"></a>
+
+##### mouseEvent.alt : <code>boolean</code>
+Determines if the Alt modifier was being pressed when the mouse event occured.
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+shift"></a>
+
+##### mouseEvent.shift : <code>boolean</code>
+Determines if the Shift modifier was being pressed when the mouse event occured.
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+type"></a>
+
+##### mouseEvent.type : <code>string</code>
+Type of mouse event (`mousedown`, `mouseup`, `mousemove` or `wheel`).
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal.MouseEvent+direction"></a>
+
+##### mouseEvent.direction : <code>number</code>
+Only for `wheel` events. Direction of the wheel turn (1=down; -1=up).
+
+**Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.VT200_MOUSE"></a>
 
 #### Terminal.VT200\_MOUSE
 Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events.
 
-**Kind**: static property of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+**Kind**: static constant of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal.BTN_EVENT_MOUSE"></a>
 
 #### Terminal.BTN\_EVENT\_MOUSE
 Constant used for `enableMouse()`: Motion events only when buttons are down.
 
-**Kind**: static property of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+**Kind**: static constant of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal.ANY_EVENT_MOUSE"></a>
 
 #### Terminal.ANY\_EVENT\_MOUSE
 Constant used for `enableMouse()`: All events.
 
-**Kind**: static property of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+**Kind**: static constant of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+<a name="module_tty-events--Terminal..TermOptions"></a>
+
+#### Terminal~TermOptions
+**Kind**: inner typedef of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| timeout | <code>number</code> | <code>500</code> | The escape sequence timeout timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout. |
+

@@ -326,16 +326,6 @@ function nok(str, ...args) {
 
 		_read() {
 			this.readyRes();
-			// if (ready) {
-			// 	const sequence = tests[testIndex].sequence;
-
-			// 	if (typeof sequence === "string")
-			// 		this.push(Buffer.from(sequence, "utf8"));
-			// 	else
-			// 		this.push(Buffer.from(sequence));
-
-			// 	ready = false;
-			// }
 		}
 
 		async $push(sequence) {

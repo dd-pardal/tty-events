@@ -1,6 +1,6 @@
 # tty-events #
 
-_tty-events_ is a fast package for handling events from the terminal, made for interactive, terminal-based applications.
+`tty-events` is a fast package for handling events from the terminal, made for interactive, terminal-based applications.
 
 ## Features
 
@@ -34,7 +34,7 @@ term.on("keypress", (key)=>{
 
 ### Mouse
 
-_tty-events_ supports mouse (VT200 and SGR extended). In order to receive mouse events, the [`enableMouse()`](docs.md#module_tty-events--Terminal+enableMouse) function must be called first.
+`tty-events` supports mouse (VT200 and SGR extended). In order to receive mouse events, the [`enableMouse()`](docs.md#module_tty-events--Terminal+enableMouse) function must be called first.
 
 ```js
 term.enableMouse();
@@ -46,7 +46,7 @@ term.on("mousedown", (ev)=>{
 
 ### Pasting
 
-_tty-events_ supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the [`enableBPM()`](docs.md#module_tty-events--Terminal+enableBPM) function must be called first.
+`tty-events` supports [bracketed paste mode](https://cirw.in/blog/bracketed-paste). This feature allows to distinguish between real keystrokes and pasted text from the clipboard. This is useful in applications where ceratin keys trigger some command. In order to receive paste events, the [`enableBPM()`](docs.md#module_tty-events--Terminal+enableBPM) function must be called first.
 
 ```js
 term.enableBPM();
@@ -58,7 +58,7 @@ term.on("paste", (text)=>{
 
 ### Focus
 
-Focus events allow an applicatioin to stop updating the screen when it's not necessary. In order to receive paste events, the [`enableFocus()`](docs.md#module_tty-events--Terminal+enableFocus) function must be called first.
+Focus events allow an applicatioin to stop updating the screen when it's not necessary. In order to receive focus events, the [`enableFocus()`](docs.md#module_tty-events--Terminal+enableFocus) function must be called first.
 
 ```js
 term.enableFocus();

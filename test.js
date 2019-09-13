@@ -1,6 +1,6 @@
 /* This is the test script for tty-events */
 
-const Terminal = require("./index.min.js"),
+const Terminal = require("./index.js"),
 stream = require("stream"),
 assert = require("assert");
 
@@ -193,6 +193,35 @@ const tests = [
 			sequence: "\x1b[2;2~",
 			isSpecial: true,
 			shift: true
+		})
+	},
+	{
+		name: "Alt+O",
+		sequence: "\x1bO",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "O",
+			sequence: "\x1bO",
+			alt: true,
+		})
+	},
+	{
+		name: "Alt+[",
+		sequence: "\x1b[",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "[",
+			sequence: "\x1b[",
+			alt: true,
+		})
+	},
+	{
+		name: "Char ñ",
+		sequence: "ñ",
+		type: "keypress",
+		ev: new Terminal.KeyboardEvent({
+			name: "ñ",
+			sequence: "ñ"
 		})
 	},
 	{

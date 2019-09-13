@@ -323,6 +323,14 @@ function* emitKeys(term) {
 				if (ch >= '0' && ch <= '9') {
 					modifier = (ch >> 0) - 1;
 					s += (ch = yield);
+				} else if (ch === "") { // Alt+O
+					term.emit("keypress", new KeyboardEvent({
+						name: "O",
+						sequence: s,
+						alt: true
+					}));
+					ch = yield;
+					continue main;
 				}
 
 				code += ch;
@@ -335,6 +343,16 @@ function* emitKeys(term) {
 				// ESC [ [ num char
 				const seqStart = s.length;
 				s += (ch = yield);
+
+				if (ch === "") { // Alt+[
+					term.emit("keypress", new KeyboardEvent({
+						name: "[",
+						sequence: s,
+						alt: true
+					}));
+					ch = yield;
+					continue main;
+				}
 
 				if (ch === "M") { // MOUSE
 					for (let i=0; i<3; i++) {

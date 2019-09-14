@@ -25,7 +25,14 @@
             * ["focusout"](#module_tty-events--Terminal+event_focusout)
             * ["unknownSequence"](#module_tty-events--Terminal+event_unknownSequence)
         * _static_
-            * [.KeyboardEvent](#module_tty-events--Terminal.KeyboardEvent)
+            * [.KeyboardEvent](#module_tty-events--Terminal..KeyboardEvent)
+                * [.name](#module_tty-events--Terminal..KeyboardEvent+name) : <code>string</code>
+                * [.sequence](#module_tty-events--Terminal..KeyboardEvent+sequence) : <code>string</code>
+                * [.isSpecial](#module_tty-events--Terminal..KeyboardEvent+isSpecial) : <code>boolean</code>
+                * [.ctrl](#module_tty-events--Terminal..KeyboardEvent+ctrl) : <code>boolean</code>
+                * [.alt](#module_tty-events--Terminal..KeyboardEvent+alt) : <code>boolean</code>
+                * [.shift](#module_tty-events--Terminal..KeyboardEvent+shift) : <code>boolean</code>
+                * [.toString()](#module_tty-events--Terminal..KeyboardEvent+toString)
             * [.MouseEvent](#module_tty-events--Terminal.MouseEvent)
                 * [.x](#module_tty-events--Terminal.MouseEvent+x) : <code>number</code>
                 * [.y](#module_tty-events--Terminal.MouseEvent+y) : <code>number</code>
@@ -172,12 +179,64 @@ Event fired when the terminal window loses focus.
 Event fired when the terminal receives an unrecognized or broken escape sequence.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
-<a name="module_tty-events--Terminal.KeyboardEvent"></a>
+<a name="module_tty-events--Terminal..KeyboardEvent"></a>
 
 ### Terminal.KeyboardEvent
 Represents a keyboard event (key or key combination).
 
 **Kind**: static class of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+
+* [.KeyboardEvent](#module_tty-events--Terminal..KeyboardEvent)
+    * [.name](#module_tty-events--Terminal..KeyboardEvent+name) : <code>string</code>
+    * [.sequence](#module_tty-events--Terminal..KeyboardEvent+sequence) : <code>string</code>
+    * [.isSpecial](#module_tty-events--Terminal..KeyboardEvent+isSpecial) : <code>boolean</code>
+    * [.ctrl](#module_tty-events--Terminal..KeyboardEvent+ctrl) : <code>boolean</code>
+    * [.alt](#module_tty-events--Terminal..KeyboardEvent+alt) : <code>boolean</code>
+    * [.shift](#module_tty-events--Terminal..KeyboardEvent+shift) : <code>boolean</code>
+    * [.toString()](#module_tty-events--Terminal..KeyboardEvent+toString)
+
+<a name="module_tty-events--Terminal..KeyboardEvent+name"></a>
+
+#### keyboardEvent.name : <code>string</code>
+The key name (for special keys) or character produced by the key.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+sequence"></a>
+
+#### keyboardEvent.sequence : <code>string</code>
+The sequencd produced by the key / key combination.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+isSpecial"></a>
+
+#### keyboardEvent.isSpecial : <code>boolean</code>
+Determines if the key is a special key. Special keys have names like `f2` or `backspace` or are a combination of Ctrl+symbol / Ctrl+letter.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+ctrl"></a>
+
+#### keyboardEvent.ctrl : <code>boolean</code>
+Determines if the Ctrl modifier was being pressed with the key. If the key is not a special key, this is always `false`.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+alt"></a>
+
+#### keyboardEvent.alt : <code>boolean</code>
+Determines if the Alt modifier was being pressed with the key.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+shift"></a>
+
+#### keyboardEvent.shift : <code>boolean</code>
+Determines if the Shift modifier was being pressed with the key. If the key is not a special key, this is always `false`.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+toString"></a>
+
+#### keyboardEvent.toString()
+Represents the key combination with a string in the format `["Ctrl+"]["Alt+"]["Shift+"]key.name`. For example: `"b"`, `"B"`, `"Ctrl+e"`, `"Ctrl+Shift+home"`, `"+"`.
+
+**Kind**: instance method of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
 <a name="module_tty-events--Terminal.MouseEvent"></a>
 
 ### Terminal.MouseEvent

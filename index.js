@@ -4,11 +4,13 @@
 
 const EventEmitter = require("events");
 
+/**
+ */
 class KeyboardEvent {
 	/**
 	 * @classdesc Represents a keyboard event (key or key combination).
-	 * @alias module:tty-events.KeyboardEvent
 	 * @hideconstructor
+	 * @alias module:tty-events.KeyboardEvent
 	 */
 	constructor(
 		{

@@ -826,7 +826,7 @@ function* emitKeys(term) {
 
 /**
  * @typedef TermOptions
- * @property {number} timeout=500 The escape sequence timeout timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
+ * @property {number} timeout=500 The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
  */
 
 /**

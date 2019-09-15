@@ -273,6 +273,7 @@ const tests = [
 		ev: new Terminal.MouseEvent({
 			x: 80,
 			y: 96,
+			button: 4,
 			direction: -1,
 			type: "wheel",
 			ctrl: false,

@@ -204,7 +204,7 @@ The key name (for special keys) or character produced by the key.
 <a name="module_tty-events--Terminal..KeyboardEvent+sequence"></a>
 
 #### keyboardEvent.sequence : <code>string</code>
-The sequencd produced by the key / key combination.
+The sequence produced by the key / key combination.
 
 **Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
 <a name="module_tty-events--Terminal..KeyboardEvent+isSpecial"></a>
@@ -269,7 +269,7 @@ The y coordinate of where the mouse event happened. (1 = topmost row.)
 <a name="module_tty-events--Terminal.MouseEvent+button"></a>
 
 #### mouseEvent.button : <code>number</code>
-The button number. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
+The button number, in the range 1-11. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.List of mouse buttons (from [http://xahlee.info/linux/linux_x11_mouse_button_number.html](http://xahlee.info/linux/linux_x11_mouse_button_number.html)):- `1`: Left button- `2`: Middle (wheel) button- `3`: Right button- `4`: Rotate wheel up- `5`: Rotate wheel down- `6`: Push wheel left- `7`: Push wheel right- `8`: 4th button or XButton1 (browser back)- `9`: 5th button or XButton2 (browser forward)
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.MouseEvent+ctrl"></a>

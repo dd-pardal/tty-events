@@ -32,7 +32,7 @@ class KeyboardEvent {
 		this.name = name;
 
 		/**
-		 * The sequencd produced by the key / key combination.
+		 * The sequence produced by the key / key combination.
 		 * @type {string}
 		 */
 		this.sequence = sequence;
@@ -96,10 +96,22 @@ class MouseEvent {
  * @type {number}
  */
 /**
- * The button number. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
+ * The button number, in the range 1-11. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
+ * 
+ * List of mouse buttons (from [http://xahlee.info/linux/linux_x11_mouse_button_number.html](http://xahlee.info/linux/linux_x11_mouse_button_number.html)):
+ * 
+ * - `1`: Left button
+ * - `2`: Middle (wheel) button
+ * - `3`: Right button
+ * - `4`: Rotate wheel up
+ * - `5`: Rotate wheel down
+ * - `6`: Push wheel left
+ * - `7`: Push wheel right
+ * - `8`: 4th button or XButton1 (browser back)
+ * - `9`: 5th button or XButton2 (browser forward)
  * 
  * @name module:tty-events.MouseEvent#button
- * @type {number}
+ * @type {number?}
  */
 /**
  * Determines if the Ctrl modifier was being pressed when the mouse event occured.
@@ -129,7 +141,7 @@ class MouseEvent {
 * Only for `wheel` events. Direction of the wheel turn (1=down; -1=up).
 * 
 * @name module:tty-events.MouseEvent#direction
-* @type {number}
+* @type {number?}
 */
 
 
@@ -192,31 +204,35 @@ function* emitKeys(term) {
 		//> Additional buttons are encoded like the wheel mice,
 		//>   • by adding 64 (for buttons 4 through 7), or
 		//>   • by adding 128 (for buttons 8 through 11).
-		if (b & 64)
-			button |= 4;
-		if (b & 128)
-			button |= 8;
+		if (b & 64 || b & 128) {
+			if (b & 64)
+				button |= 4;
+			if (b & 128)
+				button |= 8;
 
-		button += 1;
+		} else if (button === 3)
+			button = undefined;
+		else
+			button += 1; // Only increment button if in the range 0-2.
+
+		evOpts.button = button;
 
 		//> On button-motion events, xterm adds 32 to the event code (the third character, Cb).
 		if (b & 32) {
 			evType = "mousemove";
 
-			evOpts.button = button===4? undefined:button;
 		} else {
 			switch (button) {
-				case 4:
+				case undefined:
 					evType = "mouseup";
-					evOpts.button = undefined;
 					break;
 
-				case 5:
+				case 4:
 					evType = "wheel";
 					evOpts.direction = -1;
 					break;
 
-				case 6:
+				case 5:
 					evType = "wheel";
 					evOpts.direction = 1;
 					break;
@@ -226,8 +242,6 @@ function* emitKeys(term) {
 						evType = "mouseup";
 					else
 						evType = "mousedown";
-
-					evOpts.button = button;
 					break;
 			}
 		}

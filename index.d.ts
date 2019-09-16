@@ -86,21 +86,21 @@ declare module "tty-events" {
 			* 
 			* @name module:tty-events.MouseEvent#direction
 			*/
-			direction: number?;
+			direction: number;
 		}
 
 		/**
 		 * Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events.
 		 */
-		declare const VT200_MOUSE: number;
+		const VT200_MOUSE: number;
 		/**
 		 * Constant used for `enableMouse()`: Motion events only when buttons are down.
 		 */
-		declare const BTN_EVENT_MOUSE: number;
+		const BTN_EVENT_MOUSE: number;
 		/**
 		 * Constant used for `enableMouse()`: All events.
 		 */
-		declare const ANY_EVENT_MOUSE: number;
+		const ANY_EVENT_MOUSE: number;
 	}
 
 	interface TermOptions{
@@ -119,7 +119,7 @@ declare module "tty-events" {
 		 * @param {TermOptions} options
 		 */
 		constructor(
-			input: stream.Readable = process.stdin,
+			input: stream.Readable,
 			output: stream.Writable,
 			options: TermOptions
 		);
@@ -138,7 +138,7 @@ declare module "tty-events" {
 		 * @param {number} mode The mouse mode (one of the constants)
 		 * @param {boolean} sgr Whether to try to activate SGR extended mode
 		 */
-		enableMouse(mode: number = 0, sgr: boolean = true): void;
+		enableMouse(mode: number, sgr: boolean): void;
 		/**
 		 * Disables mouse events.
 		 */

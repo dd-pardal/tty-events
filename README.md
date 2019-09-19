@@ -4,7 +4,7 @@
 
 ## Features
 
-- Full mouse support (VT200 and SGR extended);
+- Full mouse (including highlight tracking) support (VT200 and SGR extended);
 - Bracketed paste mode support;
 - Focus support (xterm);
 - Full UTF-8 support;
@@ -43,6 +43,8 @@ term.on("mousedown", (ev)=>{
 	console.log("You clicked at (%i, %i) with the button no. %i.", ev.x, ev.y, ev.button)
 });
 ```
+
+For an highligh tracking example, see [the example highlight tracking script](https://github.com/dd-pardal/tty-events/blob/master/examples/highlight-tacking.js).
 
 ### Pasting
 

@@ -84,13 +84,13 @@ class MouseEvent {
 	}
 }
 /**
- * The x coordinate of where the mouse event happened. (1 = leftmost column.)
+ * The x coordinate of where the mouse event happened (1 = leftmost column).
  * 
  * @name module:tty-events.MouseEvent#x
  * @type {number}
  */
 /** 
- * The y coordinate of where the mouse event happened. (1 = topmost row.)
+ * The y coordinate of where the mouse event happened (1 = topmost row).
  * 
  * @name module:tty-events.MouseEvent#y
  * @type {number}
@@ -98,7 +98,7 @@ class MouseEvent {
 /**
  * The button number, in the range 1-11. This property might be `undefined` for `mouseup` and `mousemove` events. If `undefined` in a `mousemove` event, no button was pressed when the cursor moved.
  * 
- * List of mouse buttons (from [http://xahlee.info/linux/linux_x11_mouse_button_number.html](http://xahlee.info/linux/linux_x11_mouse_button_number.html)):
+ * List of mouse buttons (from {@link http://xahlee.info/linux/linux_x11_mouse_button_number.html}):
  * 
  * - `1`: Left button
  * - `2`: Middle (wheel) button
@@ -138,11 +138,58 @@ class MouseEvent {
  * @type {string}
  */
 /**
-* Only for `wheel` events. Direction of the wheel turn (1=down; -1=up).
+* Only for `wheel` events. Direction of the wheel turn (1 = down; -1 = up).
 * 
 * @name module:tty-events.MouseEvent#direction
 * @type {number?}
 */
+
+/**
+ */
+class HighlightEvent {
+	/**
+	 * @classdesc Represents a highlight selection.
+	 * @hideconstructor
+	 * @alias module:tty-events.HighlightEvent
+	 */
+	constructor(startX, startY ,endX, endY, mouseX, mouseY) {		
+		/**
+		 * The x coordinate of the first character of the selection.
+		 * @type {number}
+		 */
+		this.startX = startX;
+
+		/**
+		 * The y coordinate of the first character of the selection.
+		 * @type {number}
+		 */
+		this.startY = startY;
+
+		/**
+		 * The x coordinate of the first character after the selection.
+		 * @type {number}
+		 */
+		this.endX = endX;
+
+		/**
+		 * The y coordinate of the first character after the selection.
+		 * @type {number}
+		 */
+		this.endY = endY;
+
+		/**
+		 * The x coordinate of the mouse position.
+		 * @type {number}
+		 */
+		this.mouseX = mouseX;
+
+		/**
+		 * The y coordinate of the mouse position.
+		 * @type {number}
+		 */
+		this.mouseY = mouseY;
+	}
+}
 
 
 /*******************************************************************************\
@@ -260,6 +307,24 @@ function* emitKeys(term) {
 		term.emit(evType, new MouseEvent(evOpts));
 		term.emit("mouse", new MouseEvent(evOpts));
 	}
+	function parseAndEmitHighlight(args) {
+		var startX, startY ,endX, endY, mouseX, mouseY;
+
+		if (args.length === 6) //  ESC [ T ... *or* ESC [ < ... T
+			// Apparently this happens if either the start position changed (backwards selection) or
+			// if the mouse position is not the same as the end position (new line).
+			[startX, startY ,endX, endY, mouseX, mouseY] = args;
+
+		else { // ESC [ t ... *or* ESC [ < ... t
+			endX = mouseX = args[0];
+			endY = mouseY = args[1];
+		}
+
+		term.emit("highlight", new HighlightEvent(startX, startY ,endX, endY, mouseX, mouseY))
+	}
+	function emitEsc() {
+		term.emit("keypress", new KeyboardEvent({name: "escape", sequence: "\x1b", isSpecial: true}))
+	}
 
 	/**
 	 * Was the last char a carriage return?
@@ -371,6 +436,8 @@ function* emitKeys(term) {
 				}
 
 				if (ch === "M") { // MOUSE
+					const args = [];
+
 					for (let i=0; i<3; i++) {
 						ch = yield;
 						if (ch === "") {
@@ -379,13 +446,30 @@ function* emitKeys(term) {
 							continue main;
 						}
 						s += ch;
+						args.push(ch.charCodeAt(0) - 0x20)
 					}
 
-					parseAndEmitMouse(
-						s[seqStart+1].charCodeAt(0) - 0x20,
-						s[seqStart+2].charCodeAt(0) - 0x20,
-						s[seqStart+3].charCodeAt(0) - 0x20
-					);
+					parseAndEmitMouse(...args);
+
+					ch = yield;
+					continue;
+				} else if (ch === "T" || ch === "t") { // MOUSE HIGHLIGHT TRACKING
+					const mode = ch, argsLength = mode==="T"? 6:2;
+
+					const args = [];
+
+					for (let i=0; i<argsLength; i++) {
+						ch = yield;
+						if (ch === "") {
+							term.emit("unknownSequence", s);
+							ch = yield;
+							continue main;
+						}
+						s += ch;
+						args.push(ch.charCodeAt(0) - 0x20)
+					}
+
+					parseAndEmitHighlight(args);
 
 					ch = yield;
 					continue;
@@ -456,6 +540,7 @@ function* emitKeys(term) {
 				// CSI sequences might not represent a key.
 				if (
 					(seq[0] === "<" && (ch==="M" || ch==="m")) ||
+					(seq[0] === "<" && (ch==="T" || ch==="t")) ||
 					seq[0] === "I" ||
 					seq[0] === "O" ||
 					seq === "200~"
@@ -463,21 +548,43 @@ function* emitKeys(term) {
 					/* These sequences should not be preceded with an extra ESC.
 					 * If that happens, it's probably because the Esc key was pressed.
 					 */
-					if (escaped >= 2) {
-						term.emit("keypress", new Key({name: "escape", isSpecial: true}))
-					}
+					if (escaped >= 2)
+						emitEsc();
 
-					if (seq[0] === "<" && (ch==="M" || ch==="m")) { // SGR MOUSE
+					if (ch==="M" || ch==="m" || ch==="T" || ch==="t") {
+						/**
+						 * - `true`: SGR extended mouse;
+						 * - `false`: Highlight tracking.
+						 */
+						const mouse = ch==="M" || ch==="m",
 
-						const args = s.slice(3, s.length-1).split(";");
+						args = seq.slice(1, seq.length-1).split(";");
 
-						if (args.length === 3) {
-							parseAndEmitMouse(
-								parseInt(args[0]),
-								parseInt(args[1]),
-								parseInt(args[2]),
-								ch === "m"
-							);
+						let err = args.length !== (mouse? 3:(ch === "t"? 2:6));
+
+						if (!err) {
+							for (let i=0; i<args.length; i++) {
+								const n = parseInt(args[i]);
+								if (isNaN(n)) {
+									err = true;
+									break;
+								}
+								args[i] = n;
+							};
+						}
+
+						if (err) {
+							term.emit("unknownSequence", s);
+
+						} else {
+							if (mouse) { // SGR MOUSE
+								parseAndEmitMouse(
+									...args,
+									ch === "m"
+								);
+							} else /* if (ch==="T" || ch==="t") */ { // HIGHLIGHT TRACKING
+								parseAndEmitHighlight(args);
+							}
 						}
 					} else if (seq[0] === "I") { // FOCUS IN
 						term.emit("focusin");
@@ -509,7 +616,6 @@ function* emitKeys(term) {
 						}
 					}
 
-						
 					ch = yield;
 					continue;
 				}
@@ -663,6 +769,9 @@ function* emitKeys(term) {
 		} else {
 			// Key is not an escape sequence, but might be escaped.
 
+			if (escaped >= 2)
+				emitEsc();
+
 			key.alt = Boolean(escaped); // In most terminals, typing a character while holding Alt precedes the char with an ESC.
 			key.sequence = s;
 
@@ -720,6 +829,7 @@ function* emitKeys(term) {
 					if (byte & 0x20) { // 111x xxxx
 						if (byte & 0x10) { // 1111 xxxx
 							if (byte & 0x8) { // Unknown (1111 1xxx)
+								ch = yield;
 								continue;
 							} else { // 1111 0xxx
 								length = 4;
@@ -821,7 +931,7 @@ function* emitKeys(term) {
 	
 				}/* else // Continuation at start of sequence (10xx xxxx) */
 
-				key.sequence = "\x1b".repeat(escaped)+key.name;
+				key.sequence = (escaped? "\x1b":"") + key.name;
 			}
 		}
 
@@ -916,11 +1026,16 @@ class Terminal extends EventEmitter {
 	enableMouse(mode = 0, sgr = true) {
 		// If a terminal dosen't support a certain mode, try to enable the most complete one.
 		this.output.write(`\x1b[?1000h`);
-		if (mode >= 2)
-			this.output.write(`\x1b[?1002h`);
 
-		if (mode == 3)
-			this.output.write(`\x1b[?1003h`);
+		if (mode === 1)
+			this.output.write(`\x1b[?1001h`);
+		else {
+			if (mode >= 2)
+				this.output.write(`\x1b[?1002h`);
+
+			if (mode === 3)
+				this.output.write(`\x1b[?1003h`);
+		}
 		
 		if (sgr)
 			this.output.write(`\x1b[?1006h`);
@@ -929,7 +1044,7 @@ class Terminal extends EventEmitter {
 	 * Disables mouse events.
 	 */
 	disableMouse() {
-		this.output.write(`\x1b[?1000l`);
+		this.output.write(`\x1b[?1000l\x1b[?1006l`);
 	}
 
 	/**
@@ -1012,6 +1127,12 @@ class Terminal extends EventEmitter {
  * @event module:tty-events#focusout
  */
 /**
+ * Event fired when text is selected using highlight tracking.
+ * 
+ * @event module:tty-events#highlight
+ * @type {string}
+ */
+/**
  * Event fired when the terminal receives an unrecognized or broken escape sequence.
  * 
  * @event module:tty-events#unknownSequence
@@ -1025,24 +1146,28 @@ Object.assign(Terminal, {
 	 * @alias module:tty-events.VT200_MOUSE
 	 */
 	VT200_MOUSE: 0,
-
+	/**
+	 * Constant used for `enableMouse()`: Mouse highlight tracking. **If you use this constant, make sure to respond to `mousedown` events with a proper escape sequence, otherwise the terminal may hang.**
+	 * @const
+	 * @alias module:tty-events.VT200_HIGHLIGHT_MOUSE
+	 */
+	VT200_HIGHLIGHT_MOUSE: 1,
 	/**
 	 * Constant used for `enableMouse()`: Motion events only when buttons are down.
-	 * @alias module:tty-events.BTN_EVENT_MOUSE
 	 * @const
+	 * @alias module:tty-events.BTN_EVENT_MOUSE
 	 */
 	BTN_EVENT_MOUSE: 2,
-
 	/**
 	 * Constant used for `enableMouse()`: All events.
-	 * @alias module:tty-events.ANY_EVENT_MOUSE
 	 * @const
+	 * @alias module:tty-events.ANY_EVENT_MOUSE
 	 */
 	ANY_EVENT_MOUSE: 3,
 
 	KeyboardEvent,
-
-	MouseEvent
+	MouseEvent,
+	HighlightEvent
 });
 
 // Export stuff

@@ -352,6 +352,44 @@ const tests = [
 		})
 	},
 	{
+		name: "Mousedown left (345, 678)",
+		sequence: "\x1b[<0;345;678M",
+		type: "mousedown",
+		ev: new Terminal.MouseEvent({
+			x: 345,
+			y: 678,
+			button: 1,
+			type: "mousedown",
+			ctrl: false,
+			alt: false,
+			shift: false
+		})
+	},
+	{
+		name: "Highlight (1, 2)->(3, 4) (5, 6)",
+		sequence: [0x1b, 0x5b, 0x54, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26],
+		type: "highlight",
+		ev: new Terminal.HighlightEvent(1, 2, 3, 4, 5, 6)
+	},
+	{
+		name: "Highlight ->(83, 217)",
+		sequence: [0x1b, 0x5b, 0x74, 0x73, 0xf9],
+		type: "highlight",
+		ev: new Terminal.HighlightEvent(undefined, undefined, 83, 217, 83, 217)
+	},
+	{
+		name: "Highlight (1, 2)->(3, 4) (5, 6)",
+		sequence: "\x1b[<1;2;3;4;5;6T",
+		type: "highlight",
+		ev: new Terminal.HighlightEvent(1, 2, 3, 4, 5, 6)
+	},
+	{
+		name: "Highlight ->(345, 678)",
+		sequence: "\x1b[<345;678t",
+		type: "highlight",
+		ev: new Terminal.HighlightEvent(undefined, undefined, 345, 678, 345, 678)
+	},
+	{
 		name: "Paste",
 		sequence: "\x1b[200~Text\x1b[201~",
 		type: "paste",
@@ -384,7 +422,7 @@ function nok(str, ...args) {
 }
 
 (async function(){
-	process.stdout.write("\x1b[3g\x1b[28G\x1bH\x1b[0G"); // Clear the tab stops, move the cursor and set a tab stop.
+	process.stdout.write("\x1b[3g\x1b[35G\x1bH\x1b[0G"); // Clear the tab stops, move the cursor and set a tab stop.
 	console.log("  \x1b[1mNAME\tSEQUENCE\x1b[0m");
 	console.log("--------------------------------------------");
 

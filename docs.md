@@ -23,6 +23,7 @@
             * ["paste"](#module_tty-events--Terminal+event_paste)
             * ["focusin"](#module_tty-events--Terminal+event_focusin)
             * ["focusout"](#module_tty-events--Terminal+event_focusout)
+            * ["highlight"](#module_tty-events--Terminal+event_highlight)
             * ["unknownSequence"](#module_tty-events--Terminal+event_unknownSequence)
         * _static_
             * [.KeyboardEvent](#module_tty-events--Terminal..KeyboardEvent)
@@ -42,7 +43,15 @@
                 * [.shift](#module_tty-events--Terminal.MouseEvent+shift) : <code>boolean</code>
                 * [.type](#module_tty-events--Terminal.MouseEvent+type) : <code>string</code>
                 * [.direction](#module_tty-events--Terminal.MouseEvent+direction) : <code>number</code>
+            * [.HighlightEvent](#module_tty-events--Terminal..HighlightEvent)
+                * [.startX](#module_tty-events--Terminal..HighlightEvent+startX) : <code>number</code>
+                * [.startY](#module_tty-events--Terminal..HighlightEvent+startY) : <code>number</code>
+                * [.endX](#module_tty-events--Terminal..HighlightEvent+endX) : <code>number</code>
+                * [.endY](#module_tty-events--Terminal..HighlightEvent+endY) : <code>number</code>
+                * [.mouseX](#module_tty-events--Terminal..HighlightEvent+mouseX) : <code>number</code>
+                * [.mouseY](#module_tty-events--Terminal..HighlightEvent+mouseY) : <code>number</code>
             * [.VT200_MOUSE](#module_tty-events--Terminal.VT200_MOUSE)
+            * [.VT200_HIGHLIGHT_MOUSE](#module_tty-events--Terminal.VT200_HIGHLIGHT_MOUSE)
             * [.BTN_EVENT_MOUSE](#module_tty-events--Terminal.BTN_EVENT_MOUSE)
             * [.ANY_EVENT_MOUSE](#module_tty-events--Terminal.ANY_EVENT_MOUSE)
         * _inner_
@@ -173,6 +182,12 @@ Event fired when the terminal window receives focus.
 Event fired when the terminal window loses focus.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+<a name="module_tty-events--Terminal+event_highlight"></a>
+
+### "highlight"
+Event fired when text is selected using highlight tracking.
+
+**Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal+event_unknownSequence"></a>
 
 ### "unknownSequence"
@@ -257,13 +272,13 @@ Represents a mouse event (click, wheel, etc.).
 <a name="module_tty-events--Terminal.MouseEvent+x"></a>
 
 #### mouseEvent.x : <code>number</code>
-The x coordinate of where the mouse event happened. (1 = leftmost column.)
+The x coordinate of where the mouse event happened (1 = leftmost column).
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.MouseEvent+y"></a>
 
 #### mouseEvent.y : <code>number</code>
-The y coordinate of where the mouse event happened. (1 = topmost row.)
+The y coordinate of where the mouse event happened (1 = topmost row).
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.MouseEvent+button"></a>
@@ -299,13 +314,70 @@ Type of mouse event (`mousedown`, `mouseup`, `mousemove` or `wheel`).
 <a name="module_tty-events--Terminal.MouseEvent+direction"></a>
 
 #### mouseEvent.direction : <code>number</code>
-Only for `wheel` events. Direction of the wheel turn (1=down; -1=up).
+Only for `wheel` events. Direction of the wheel turn (1 = down; -1 = up).
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
+<a name="module_tty-events--Terminal..HighlightEvent"></a>
+
+### Terminal.HighlightEvent
+Represents a highlight selection.
+
+**Kind**: static class of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+
+* [.HighlightEvent](#module_tty-events--Terminal..HighlightEvent)
+    * [.startX](#module_tty-events--Terminal..HighlightEvent+startX) : <code>number</code>
+    * [.startY](#module_tty-events--Terminal..HighlightEvent+startY) : <code>number</code>
+    * [.endX](#module_tty-events--Terminal..HighlightEvent+endX) : <code>number</code>
+    * [.endY](#module_tty-events--Terminal..HighlightEvent+endY) : <code>number</code>
+    * [.mouseX](#module_tty-events--Terminal..HighlightEvent+mouseX) : <code>number</code>
+    * [.mouseY](#module_tty-events--Terminal..HighlightEvent+mouseY) : <code>number</code>
+
+<a name="module_tty-events--Terminal..HighlightEvent+startX"></a>
+
+#### highlightEvent.startX : <code>number</code>
+The x coordinate of the first character of the selection.
+
+**Kind**: instance property of [<code>HighlightEvent</code>](#module_tty-events--Terminal..HighlightEvent)  
+<a name="module_tty-events--Terminal..HighlightEvent+startY"></a>
+
+#### highlightEvent.startY : <code>number</code>
+The y coordinate of the first character of the selection.
+
+**Kind**: instance property of [<code>HighlightEvent</code>](#module_tty-events--Terminal..HighlightEvent)  
+<a name="module_tty-events--Terminal..HighlightEvent+endX"></a>
+
+#### highlightEvent.endX : <code>number</code>
+The x coordinate of the first character after the selection.
+
+**Kind**: instance property of [<code>HighlightEvent</code>](#module_tty-events--Terminal..HighlightEvent)  
+<a name="module_tty-events--Terminal..HighlightEvent+endY"></a>
+
+#### highlightEvent.endY : <code>number</code>
+The y coordinate of the first character after the selection.
+
+**Kind**: instance property of [<code>HighlightEvent</code>](#module_tty-events--Terminal..HighlightEvent)  
+<a name="module_tty-events--Terminal..HighlightEvent+mouseX"></a>
+
+#### highlightEvent.mouseX : <code>number</code>
+The x coordinate of the mouse position.
+
+**Kind**: instance property of [<code>HighlightEvent</code>](#module_tty-events--Terminal..HighlightEvent)  
+<a name="module_tty-events--Terminal..HighlightEvent+mouseY"></a>
+
+#### highlightEvent.mouseY : <code>number</code>
+The y coordinate of the mouse position.
+
+**Kind**: instance property of [<code>HighlightEvent</code>](#module_tty-events--Terminal..HighlightEvent)  
 <a name="module_tty-events--Terminal.VT200_MOUSE"></a>
 
 ### Terminal.VT200\_MOUSE
 Constant used for `enableMouse()`: Only mousedown, mouseup and wheel events.
+
+**Kind**: static constant of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+<a name="module_tty-events--Terminal.VT200_HIGHLIGHT_MOUSE"></a>
+
+### Terminal.VT200\_HIGHLIGHT\_MOUSE
+Constant used for `enableMouse()`: Mouse highlight tracking. **If you use this constant, make sure to respond to `mousedown` events with a proper escape sequence, otherwise the terminal may hang.**
 
 **Kind**: static constant of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal.BTN_EVENT_MOUSE"></a>

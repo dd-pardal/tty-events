@@ -1,6 +1,6 @@
 {
   "name": "tty-events",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "A package for handling terminal input (mouse, keyboard, clipboard and focus).",
   "main": "index.min.js",
   "scripts": {

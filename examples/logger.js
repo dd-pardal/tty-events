@@ -1,24 +1,24 @@
 /* Logger Script
  *
- * This is the example logger script for tty-events. Simply type "node logger" in your terminal and
+ * This is the example logger script for tty-events. Simply type "node examples/logger" in your terminal and
  * press some keys, click somewhere, or paste something.
  */
 
-const Terminal = require("./index.js");
+const Terminal = require("../index.js");
 
 if (process.stdin.isTTY)
 	process.stdin.setRawMode(true);
-
-const te = new Terminal;
 
 function dataListener(data) {
 	var str = "";
 	for (let i=0; i<data.length; i++)
 		str += data[i].toString(16) + " ";
 
-	console.log(str)
+	console.log("Input bytes: "+str)
 }
 process.stdin.on("data", dataListener)
+
+const te = new Terminal;
 
 te.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {

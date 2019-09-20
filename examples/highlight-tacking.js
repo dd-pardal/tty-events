@@ -1,4 +1,4 @@
-/* Highlight tracking Script
+/* Highlight Tracking Script
  *
  * This is the example highlight tracking script for tty-events. Simply type "node examples/highlight-tacking.js"
  * in your terminal and select some of the sample text.
@@ -12,6 +12,8 @@ print = stdout.write.bind(stdout);
 
 const te = new Terminal;
 
+// The start position may not be sent by the terminal if it is the same one that the
+// program originally sent, so we save it and use it if the terminal doesn't send us one.
 var lastStartX, lastStartY;
 
 function cleanup() {
@@ -29,23 +31,28 @@ te.enableMouse(Terminal.VT200_HIGHLIGHT_MOUSE);
 // Enable the alternate screen buffer, set the cursor to the top left corner and write the sample text.
 print("\x1b[?1049h\x1b[H" + loremIpsum.slice(0, stdout.columns*stdout.rows));
 
+// Exit on Ctrl+c
 te.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
 		cleanup();
 		process.exit();
 	}
 })
+
 te.on("mousedown", (ev)=>{
+	// Instruct the terminal to start selection at the mouse position and let the user end it anywhere.
+	// NEVER FORGET TO SEND THE ESCAPE SEQUENCE!
+	print(`\x1b[1;${ev.x};${ev.y};1;${stdout.rows+1}T`);
+
+	// Save the start position we sent to the terminal.
 	lastStartX = ev.x;
 	lastStartY = ev.y;
-
-	// Instruct the terminal to start selection at the mouse position and let the user end it anywhere.
-	print(`\x1b[1;${ev.x};${ev.y};1;${stdout.rows+1}T`);
 })
 te.on("highlight", (ev)=>{
 	cleanup();
 	console.log(ev);
 
+	// If the terminal sent us the start position, we use it. Otherwise, we use the one we sent it.
 	console.log("You selected “\x1b[36m%s\x1b[39m”.", loremIpsum.slice(
 		((ev.startX || lastStartX) - 1) + ((ev.startY || lastStartY) - 1)*stdout.columns,
 		(ev.endX - 1) + (ev.endY - 1)*stdout.columns

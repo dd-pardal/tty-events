@@ -33,6 +33,7 @@
                 * [.ctrl](#module_tty-events--Terminal..KeyboardEvent+ctrl) : <code>boolean</code>
                 * [.alt](#module_tty-events--Terminal..KeyboardEvent+alt) : <code>boolean</code>
                 * [.shift](#module_tty-events--Terminal..KeyboardEvent+shift) : <code>boolean</code>
+                * [.meta](#module_tty-events--Terminal..KeyboardEvent+meta) : <code>boolean</code>
                 * [.toString()](#module_tty-events--Terminal..KeyboardEvent+toString)
             * [.MouseEvent](#module_tty-events--Terminal.MouseEvent)
                 * [.x](#module_tty-events--Terminal.MouseEvent+x) : <code>number</code>
@@ -208,6 +209,7 @@ Represents a keyboard event (key or key combination).
     * [.ctrl](#module_tty-events--Terminal..KeyboardEvent+ctrl) : <code>boolean</code>
     * [.alt](#module_tty-events--Terminal..KeyboardEvent+alt) : <code>boolean</code>
     * [.shift](#module_tty-events--Terminal..KeyboardEvent+shift) : <code>boolean</code>
+    * [.meta](#module_tty-events--Terminal..KeyboardEvent+meta) : <code>boolean</code>
     * [.toString()](#module_tty-events--Terminal..KeyboardEvent+toString)
 
 <a name="module_tty-events--Terminal..KeyboardEvent+name"></a>
@@ -244,6 +246,12 @@ Determines if the Alt modifier was being pressed with the key.
 
 #### keyboardEvent.shift : <code>boolean</code>
 Determines if the Shift modifier was being pressed with the key. If the key is not a special key, this is always `false`.
+
+**Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
+<a name="module_tty-events--Terminal..KeyboardEvent+meta"></a>
+
+#### keyboardEvent.meta : <code>boolean</code>
+Determines if the Alt modifier was being pressed with the key. Present for compatibility with the `readline` module.
 
 **Kind**: instance property of [<code>KeyboardEvent</code>](#module_tty-events--Terminal..KeyboardEvent)  
 <a name="module_tty-events--Terminal..KeyboardEvent+toString"></a>

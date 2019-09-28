@@ -63,6 +63,17 @@ class KeyboardEvent {
 	}
 
 	/**
+	 * Determines if the Alt modifier was being pressed with the key. Present for compatibility with the `readline` module.
+	 * @type {boolean}
+	 */
+	get meta() {
+		return this.alt;
+	}
+	set meta(value) {
+		this.alt = value;
+	}
+
+	/**
 	 * Represents the key combination with a string in the format `["Ctrl+"]["Alt+"]["Shift+"]key.name`. For example: `"b"`, `"B"`, `"Ctrl+e"`, `"Ctrl+Shift+home"`, `"+"`.
 	 */
 	toString() {
@@ -710,14 +721,14 @@ function* emitKeys(term) {
 					case '[24~': key.name = 'f12'; break;
 
 					/* Extended function keys */
-					case '[25~': key.name = 'f3'; key.shift = true; break; // f13?
-					case '[26~': key.name = 'f4'; key.shift = true; break; // f14?
-					case '[28~': key.name = 'f5'; key.shift = true; break; // f15?
-					case '[29~': key.name = 'f6'; key.shift = true; break; // f16?
-					case '[31~': key.name = 'f7'; key.shift = true; break; // f17?
-					case '[32~': key.name = 'f8'; key.shift = true; break; // f18?
-					case '[33~': key.name = 'f9'; key.shift = true; break; // f19?
-					case '[34~': key.name = 'f10'; key.shift = true; break; // f20?
+					case '[25~': key.name = 'f3'; key.shift = true; break;
+					case '[26~': key.name = 'f4'; key.shift = true; break;
+					case '[28~': key.name = 'f5'; key.shift = true; break;
+					case '[29~': key.name = 'f6'; key.shift = true; break;
+					case '[31~': key.name = 'f7'; key.shift = true; break;
+					case '[32~': key.name = 'f8'; key.shift = true; break;
+					case '[33~': key.name = 'f9'; key.shift = true; break;
+					case '[34~': key.name = 'f10'; key.shift = true; break;
 
 					/* xterm/rxvt ESC [ number ~ */
 					case '[1~': key.name = 'home'; break;
@@ -811,7 +822,7 @@ function* emitKeys(term) {
 				key.ctrl = true;
 
 			} else {
-				// Character (letter, number, symbol, etc...). Note that Alt+O and Alt+[ will not work.
+				// Character (letter, number, symbol, etc...).
 
 				key.isSpecial = false;
 

@@ -185,7 +185,7 @@ Event fired when the terminal window loses focus.
 <a name="module_tty-events--Terminal+event_highlight"></a>
 
 ### "highlight"
-Event fired when text is selected using highlight tracking.
+Event fired when text is selected using highlight tracking. This event may not fire if the selection was empty.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal+event_unknownSequence"></a>

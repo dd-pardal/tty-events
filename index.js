@@ -1127,7 +1127,7 @@ class Terminal extends EventEmitter {
  * @event module:tty-events#focusout
  */
 /**
- * Event fired when text is selected using highlight tracking.
+ * Event fired when text is selected using highlight tracking. This event may not fire if the selection was empty.
  * 
  * @event module:tty-events#highlight
  * @type {string}

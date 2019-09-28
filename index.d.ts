@@ -70,16 +70,16 @@ declare module "tty-events" {
 
 		/** Represents a highlight selection. */
 		class HighlightEvent {
-			/** The x coordinate of the start of the selection. */
+			/** The x coordinate of first character of the selection. */
 			startX: number;
 
-			/** The y coordinate of the start of the selection. */
+			/** The y coordinate of the first character of the selection. */
 			startY: number;
 
-			/** The x coordinate of the end of the selection. */
+			/** The x coordinate of the first character after the selection. */
 			endX: number;
 
-			/** The y coordinate of the end of the selection. */
+			/** The y coordinate of the first character after the selection. */
 			endY: number;
 
 			/** The x coordinate of the mouse position. */
@@ -178,7 +178,7 @@ declare module "tty-events" {
 		addListener(event: "focusout", listener: () => void): this;
 
 
-		/** Event fired when text is selected using highlight tracking. */
+		/** Event fired when text is selected using highlight tracking. This event may not fire if the selection was empty. */
 		addListener(event: "highlight", listener: (ev: Terminal.HighlightEvent) => void): this;
 
 

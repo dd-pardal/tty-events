@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node test.js",
     "docs": "npx jsdoc2md index.js -d 1 > docs.md",
-    "minify": "npx terser -m --top-level -o index.min.js index.js"
+    "minify": "npx terser index.js -m --toplevel --ecma 6 -o index.min.js"
   },
   "repository": {
     "type": "git",
@@ -15,12 +15,13 @@
   "keywords": [
     "tty",
     "terminal",
+    "cli",
     "keypress",
     "mouse",
     "clipboard",
     "bracketed-paste-mode",
     "focus",
-    "utf8"
+    "unicode"
   ],
   "author": "dd.pardal",
   "license": "MIT",
@@ -30,5 +31,8 @@
   },
   "directories": {
     "example": "examples"
+  },
+  "engines": {
+    "node": ">=10.0.0 <12.12"
   }
 }

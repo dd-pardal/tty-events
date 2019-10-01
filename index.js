@@ -2,7 +2,8 @@
  * @module tty-events
  */
 
-const EventEmitter = require("events");
+const EventEmitter = require("events"),
+{ StringDecoder } = require('string_decoder');
 
 /**
  */
@@ -340,7 +341,7 @@ function* emitKeys(term) {
 	/**
 	 * Was the last char a carriage return?
 	 */
-	let lastCharWasCR = false,
+	var lastCharWasCR = false,
 
 	/**
 	 * The last character to be read.
@@ -450,14 +451,13 @@ function* emitKeys(term) {
 					const args = [];
 
 					for (let i=0; i<3; i++) {
-						ch = yield;
-						if (ch === "") {
+						let byte = yield true;
+						if (byte === "") {
 							term.emit("unknownSequence", s);
 							ch = yield;
 							continue main;
 						}
-						s += ch;
-						args.push(ch.charCodeAt(0) - 0x20)
+						args.push(byte - 0x20)
 					}
 
 					parseAndEmitMouse(...args);
@@ -470,14 +470,13 @@ function* emitKeys(term) {
 					const args = [];
 
 					for (let i=0; i<argsLength; i++) {
-						ch = yield;
-						if (ch === "") {
+						let byte = yield true;
+						if (byte === "") {
 							term.emit("unknownSequence", s);
 							ch = yield;
 							continue main;
 						}
-						s += ch;
-						args.push(ch.charCodeAt(0) - 0x20)
+						args.push(byte - 0x20)
 					}
 
 					parseAndEmitHighlight(args);
@@ -552,8 +551,8 @@ function* emitKeys(term) {
 				if (
 					(seq[0] === "<" && (ch==="M" || ch==="m")) ||
 					(seq[0] === "<" && (ch==="T" || ch==="t")) ||
-					seq[0] === "I" ||
-					seq[0] === "O" ||
+					ch === "I" ||
+					ch === "O" ||
 					seq === "200~"
 				) {
 					/* These sequences should not be preceded with an extra ESC.
@@ -597,10 +596,10 @@ function* emitKeys(term) {
 								parseAndEmitHighlight(args);
 							}
 						}
-					} else if (seq[0] === "I") { // FOCUS IN
+					} else if (ch === "I") { // FOCUS IN
 						term.emit("focusin");
 
-					} else if (seq[0] === "O") { // FOCUS OUT
+					} else if (ch === "O") { // FOCUS OUT
 						term.emit("focusout");
 
 					} else if (seq === "200~") { // BRACKETED PASTE MODE
@@ -828,119 +827,7 @@ function* emitKeys(term) {
 
 				/* **** Here one UTF-8 char is decoded. **** */
 
-				const byte = ch.charCodeAt(0);
-
-				if (!(byte & 0x80)) { // ASCII range (0xxx xxxx)
-					key.name = ch;
-	
-				} else if (byte & 0x40) { // 11xx xxxx
-					let length;
-	
-					// Get the length of the sequence
-					if (byte & 0x20) { // 111x xxxx
-						if (byte & 0x10) { // 1111 xxxx
-							if (byte & 0x8) { // Unknown (1111 1xxx)
-								ch = yield;
-								continue;
-							} else { // 1111 0xxx
-								length = 4;
-							}
-						} else { // 1110 xxxx
-							length = 3;
-						}
-					} else { // 110x xxxx
-						length = 2;
-					}
-	
-					let byte2, byte3, byte4, codePoint;
-					switch (length) {
-						case 2:
-							byte2 = (ch = yield).charCodeAt(0);
-							if (
-								(!(byte2 & 0x80) || (byte2 & 0x40))
-							) { // Not a continuation byte
-								continue;
-							}
-	
-							key.name = String.fromCharCode(
-								(byte & 0x1f) << 6 |
-								(byte2 & 0x3f)
-							);
-							break;
-	
-						case 3:
-							byte2 = (ch = yield).charCodeAt(0);
-							if (
-								(!(byte2 & 0x80) || (byte2 & 0x40))
-							) { // Not a continuation byte
-								continue;
-							}
-
-							byte3 = (ch = yield).charCodeAt(0);
-							if (
-								(!(byte3 & 0x80) || (byte3 & 0x40))
-							) {
-								continue;
-							}
-	
-							codePoint = (byte & 0x0f) << 12 |
-								(byte2 & 0x3f) << 6 |
-								(byte3 & 0x3f);
-	
-							if (codePoint >= 0xd800 && codePoint <= 0xdfff) {
-								/*
-								> The definition of UTF-8 prohibits encoding character numbers between
-								> U+D800 and U+DFFF, which are reserved for use with the UTF-16
-								> encoding form (as surrogate pairs) and do not directly represent
-								> characters.
-								https://tools.ietf.org/html/rfc3629#page-5
-								*/
-
-								continue;
-							}
-	
-							key.name = String.fromCharCode(codePoint); // Safe to use `fromCharCode` because `codePoint` is smaller than 0xffff.
-							break;
-	
-						case 4:
-							byte2 = (ch = yield).charCodeAt(0);
-							if (
-								(!(byte2 & 0x80) || (byte2 & 0x40))
-							) { // Not a continuation byte
-								byte = byte2;
-								continue;
-							}
-
-							byte3 = (ch = yield).charCodeAt(0);
-							if (
-								(!(byte3 & 0x80) || (byte3 & 0x40))
-							) {
-								byte = byte3;
-								continue;
-							}
-
-							byte4 = (ch = yield).charCodeAt(0);
-							if (
-								(!(byte4 & 0x80) || (byte4 & 0x40))
-							) {
-								byte = byte4;
-								continue;
-							}
-	
-							codePoint = (byte & 0x07) << 18 |
-								(byte2 & 0x3f) << 12 |
-								(byte3 & 0x3f) << 6 |
-								(byte4 & 0x3f);
-	
-							if (codePoint >= 0xd800 && codePoint <= 0xdfff) {
-								continue;
-							}
-	
-							key.name = String.fromCodePoint(codePoint);
-							break;
-					}
-	
-				}/* else // Continuation at start of sequence (10xx xxxx) */
+				key.name = ch;
 
 				key.sequence = (escaped? "\x1b":"") + key.name;
 			}
@@ -962,6 +849,7 @@ function* emitKeys(term) {
 /**
  * @typedef TermOptions
  * @property {number} timeout=500 The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
+ * @property {string} encoding="utf-8" The encoding of the input stream.
  */
 
 /**
@@ -977,18 +865,35 @@ class Terminal extends EventEmitter {
 	 */
 	constructor(input = process.stdin, output, {
 		escKeyTimeout = 500,
-		timeout = escKeyTimeout
+		timeout = escKeyTimeout,
+		encoding
 	} = {}) {
 		super()
 
-		const iterator = emitKeys(this);
-		iterator.next();
-
-		this._dataListener = (buf) => {
-			buf = buf.toString("binary"); // 1 byte = 1 character
+		const stringDecoder = new StringDecoder(encoding),
+		iterator = emitKeys(this);
+	
+		/**
+		 * The value returned by `iterator.next()`. (`false`: iterator expects a char; `true`: iterator expects a byte.)
+		 */
+		var sendByte = iterator.next().value
 		
+		this._dataListener = (buf) => {
 			for (let i=0; i<buf.length; i++) {
-				iterator.next(buf[i]);
+				if (sendByte)
+					sendByte = iterator.next(buf[i]).value;
+				else {
+					// Decode a character
+					let str = stringDecoder.write(Buffer.from([buf[i]]));
+
+					// Send the character(s) to the generator function.
+					if (str) for (let char of str) {
+						if (iterator.next(char).value) { // Break when a byte is expected, discarding the rest of the string (this should never happen).
+							sendByte = true;
+							break;
+						}
+					}
+				}
 			}
 		
 			// Escape Timeout
@@ -1002,7 +907,7 @@ class Terminal extends EventEmitter {
 			if (this.timeout !== Infinity) {
 				this._timeoutID = setTimeout(()=>{
 					this._timeoutID = undefined;
-					iterator.next(""); // When the timeout fires, an empty string is sent to the generator function.
+					sendByte = iterator.next("").value; // When the timeout fires, `undefined` is sent to the generator function.
 				}, this.timeout);
 			}
 		}
@@ -1014,6 +919,21 @@ class Terminal extends EventEmitter {
 		this._timeoutID = undefined;
 
 		this.resume();
+
+		// When the stream closes, clear the string decoder's internal buffer and process any incomplete code points.
+		input.on("end", ()=>{
+			if (!sendByte) {
+				let str = stringDecoder.end();
+
+				// Send the character(s) to the generator function.
+				if (str) for (let char of str) {
+					if (iterator.next(char).value) {
+						sendByte = true;
+						break;
+					}
+				}
+			}
+		})
 	}
 
 	/**

@@ -105,7 +105,9 @@ declare module "tty-events" {
 
 	interface TermOptions{
 		/** The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout. */
-		timeout: number
+		timeout?: number = 500,
+		/** The encoding of the input stream. */
+		encoding?: string = "utf-8"
 	}
 
 	type mouseListener = (ev: Terminal.MouseEvent) => void;

@@ -18,23 +18,23 @@ function dataListener(data) {
 }
 process.stdin.on("data", dataListener)
 
-const te = new Terminal;
+const term = new Terminal;
 
-te.on("keypress", (key)=>{
+term.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
-		te.disableMouse()
-		te.disableBPM()
-		te.disableFocus()
+		term.disableMouse()
+		term.disableBPM()
+		term.disableFocus()
 		process.exit();
 	}
 	console.log(key, key.toString())
 })
-te.on("unknownSequence", (s)=>console.log("Unknown sequence: %O", s))
-te.on("mouse", (s)=>console.log("%O", s))
-te.on("paste", (s)=>console.log("Pasted: %O", s))
-te.on("focusin", ()=>console.log("Focus in."))
-te.on("focusout", ()=>console.log("Focus out."))
+term.on("unknownSequence", (s)=>console.log("Unknown sequence: %O", s))
+term.on("mouse", (s)=>console.log("%O", s))
+term.on("paste", (s)=>console.log("Pasted: %O", s))
+term.on("focusin", ()=>console.log("Focus in."))
+term.on("focusout", ()=>console.log("Focus out."))
 
-te.enableMouse(Terminal.ANY_EVENT_MOUSE)
-te.enableBPM()
-te.enableFocus()
+term.enableMouse(Terminal.ANY_EVENT_MOUSE)
+term.enableBPM()
+term.enableFocus()

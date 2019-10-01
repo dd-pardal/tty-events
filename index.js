@@ -280,29 +280,19 @@ function* emitKeys(term) {
 		if (b & 32) {
 			evType = "mousemove";
 
+		} else if (button === undefined || mouseUp) {
+			evType = "mouseup";
+
+		} else if (button === 4) {
+			evType = "wheel";
+			evOpts.direction = -1;
+
+		} else if (button === 5) {
+			evType = "wheel";
+			evOpts.direction = 1;
+
 		} else {
-			switch (button) {
-				case undefined:
-					evType = "mouseup";
-					break;
-
-				case 4:
-					evType = "wheel";
-					evOpts.direction = -1;
-					break;
-
-				case 5:
-					evType = "wheel";
-					evOpts.direction = 1;
-					break;
-				
-				default:
-					if (mouseUp)
-						evType = "mouseup";
-					else
-						evType = "mousedown";
-					break;
-			}
+			evType = "mousedown";
 		}
 
 

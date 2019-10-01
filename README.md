@@ -4,19 +4,19 @@
 
 ## Features
 
-- Full mouse (including highlight tracking) support (VT200 and SGR extended);
+- Full mouse and highlight tracking support (VT200 and SGR extended);
 - Bracketed paste mode support;
-- Focus support (xterm);
+- Focus support;
 - Full UTF-8 support;
+- Support for more key combinations (especially in Windows);
 - Keys always have objects;
 - Easy comparation (`key == "Ctrl+s"`);
-- Support for more key combinations (especially in Windows);
 - `unknownSequence` event.
 
 ## Usage Examples
 ### Keyboard
 
-Here's a simple logger:
+This script logs key presses:
 
 ```js
 if (process.stdin.isTTY)
@@ -83,13 +83,13 @@ An uppercase letter emits an event with the uppercase letter and with the `shift
 
 ### "Twin" Keys
 
-Some key combinations produce the same output to `stdin`. Here is a list of most (if not all) the key combinations that may not work as expected:
+Some key combinations produce the same output to `stdin`. Here is a list of the key combinations that may not work as expected:
 
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>[letter]</kbd>: Emits `Ctrl+[letter]` (in lowercase). (The <kbd>Shift</kbd> modifier is ignored.)
-- <kbd>Ctrl</kbd>+<kbd>M</kbd>: Emits `enter`. (Terminals send `\r` when <kbd>Ctrl</kbd>+<kbd>M</kbd> is pressed.)
-- <kbd>Ctrl</kbd>+<kbd>J</kbd>: Emits `enter`. (Terminals send `\n` when <kbd>Ctrl</kbd>+<kbd>J</kbd> is pressed.)
-- <kbd>Ctrl</kbd>+<kbd>I</kbd>: Emits `tab`. (Terminals send `\t` when <kbd>Ctrl</kbd>+<kbd>I</kbd> is pressed.)
 - <kbd>Ctrl</kbd>+<kbd>H</kbd>: Emits `backspace`. (Terminals send `\b` when <kbd>Ctrl</kbd>+<kbd>H</kbd> is pressed.)
+- <kbd>Ctrl</kbd>+<kbd>I</kbd>: Emits `tab`. (Terminals send `\t` when <kbd>Ctrl</kbd>+<kbd>I</kbd> is pressed.)
+- <kbd>Ctrl</kbd>+<kbd>J</kbd>: Emits `enter`. (Terminals send `\n` when <kbd>Ctrl</kbd>+<kbd>J</kbd> is pressed.)
+- <kbd>Ctrl</kbd>+<kbd>M</kbd>: Emits `enter`. (Terminals send `\r` when <kbd>Ctrl</kbd>+<kbd>M</kbd> is pressed.)
 - <kbd>Ctrl</kbd>+<kbd>[</kbd>: Emits `escape`. (Terminals send `\x1b` when <kbd>Ctrl</kbd>+<kbd>[</kbd> is pressed.)
 - <kbd>Shift</kbd>+<kbd>F1</kbd>: Emits `f11` in some terminals.
 - <kbd>Shift</kbd>+<kbd>F2</kbd>: Emits `f12` in some terminals.
@@ -105,7 +105,8 @@ Also, some features and/or key combinations don't work in some terminal emulator
 - Mouse support isn't available in Windows Console.
 - Bracketed paste mode isn't available in Windows Console.
 - <kbd>Ctrl</kbd>+<kbd>@</kbd> doesn't work in Windows Console and in some keyboard layouts <kbd>Ctrl</kbd>+<kbd>\\</kbd>, <kbd>Ctrl</kbd>+<kbd>]</kbd>, <kbd>Ctrl</kbd>+<kbd>^</kbd> and <kbd>Ctrl</kbd>+<kbd>-</kbd> don't work too.
+- Mouse highlight tracking works in few terminals, however _xterm_ supports it.
 
-## Documentation
+## API Documentation
 
 The full documentation is available [here](https://github.com/dd-pardal/tty-events/blob/master/docs.md).

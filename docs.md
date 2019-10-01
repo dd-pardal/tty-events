@@ -409,5 +409,5 @@ Constant used for `enableMouse()`: All events.
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | timeout | <code>number</code> | <code>500</code> | The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout. |
-| encoding | <code>string</code> | <code>&quot;\&quot;utf-8\&quot;&quot;</code> | The encoding of the input stream. |
+| encoding | <code>string</code> | <code>&quot;utf-8&quot;</code> | The encoding of the input stream. |
 

@@ -391,9 +391,9 @@ const tests = [
 	},
 	{
 		name: "Paste",
-		sequence: "\x1b[200~Text\x1b[201~",
+		sequence: "\x1b[200~𝑇𝑒𝑥𝑡\x1b[201~",
 		type: "paste",
-		ev: "Text"
+		ev: "𝑇𝑒𝑥𝑡"
 	},
 	{
 		name: "Focus in",

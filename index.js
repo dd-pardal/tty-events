@@ -596,9 +596,9 @@ function* emitKeys(term) {
 
 						// Loop until a ESC [ 2 0 1 ~ is recieved.
 						const endSeq = "\x1b[201~";
-						let byteStr = "", endSeqIndex = 0;
+						let str = "", endSeqIndex = 0;
 						while (true) {
-							byteStr += (ch = yield);
+							str += (ch = yield);
 
 							if (ch === endSeq[endSeqIndex])
 								endSeqIndex++;
@@ -608,9 +608,7 @@ function* emitKeys(term) {
 							if (endSeqIndex >= endSeq.length) {
 								// A ESC [ 2 0 1 ~ was received.
 								
-								// Here we use the built-in UTF-8 decoder.
-								term.emit("paste", Buffer.from(byteStr.slice(0, byteStr.length - endSeq.length), "binary").toString("utf-8"))
-
+								term.emit("paste", str.slice(0, str.length - endSeq.length));
 								break;
 							}
 						}
@@ -814,11 +812,7 @@ function* emitKeys(term) {
 				// Character (letter, number, symbol, etc...).
 
 				key.isSpecial = false;
-
-				/* **** Here one UTF-8 char is decoded. **** */
-
 				key.name = ch;
-
 				key.sequence = (escaped? "\x1b":"") + key.name;
 			}
 		}
@@ -839,7 +833,7 @@ function* emitKeys(term) {
 /**
  * @typedef TermOptions
  * @property {number} timeout=500 The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
- * @property {string} encoding="utf-8" The encoding of the input stream.
+ * @property {string} encoding=utf-8 The encoding of the input stream.
  */
 
 /**
@@ -905,6 +899,7 @@ class Terminal extends EventEmitter {
 
 		this._input = input;
 		this.output = output || (input === process.stdin? process.stdout:null);
+		this._encoding = encoding;
 		this.timeout = timeout;
 		this._timeoutID = undefined;
 

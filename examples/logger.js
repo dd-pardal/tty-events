@@ -19,6 +19,7 @@ function dataListener(data) {
 process.stdin.on("data", dataListener)
 
 const term = new Terminal;
+term.resume()
 
 term.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {

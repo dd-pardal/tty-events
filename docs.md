@@ -6,8 +6,8 @@
     * [Terminal](#exp_module_tty-events--Terminal) ⏏
         * [new Terminal(input, output, options)](#new_module_tty-events--Terminal_new)
         * _instance_
-            * [.pause()](#module_tty-events--Terminal+pause)
-            * [.resume()](#module_tty-events--Terminal+resume)
+            * [.pause(pauseStream)](#module_tty-events--Terminal+pause)
+            * [.resume(resumeStream)](#module_tty-events--Terminal+resume)
             * [.enableMouse(mode, sgr)](#module_tty-events--Terminal+enableMouse)
             * [.disableMouse()](#module_tty-events--Terminal+disableMouse)
             * [.enableBPM()](#module_tty-events--Terminal+enableBPM)
@@ -76,16 +76,26 @@ Represents a terminal that emits events.
 
 <a name="module_tty-events--Terminal+pause"></a>
 
-### terminal.pause()
+### terminal.pause(pauseStream)
 Removes the `data` listener from the input stream.
 
 **Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| pauseStream | <code>boolean</code> | <code>true</code> | Determines if the underlying input stream is also paused. This will allow Node.js to exit. |
+
 <a name="module_tty-events--Terminal+resume"></a>
 
-### terminal.resume()
+### terminal.resume(resumeStream)
 Attaches the `data` listener to the input stream.
 
 **Kind**: instance method of [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| resumeStream | <code>boolean</code> | <code>true</code> | Determines if the underlying input stream is also resumed. |
+
 <a name="module_tty-events--Terminal+enableMouse"></a>
 
 ### terminal.enableMouse(mode, sgr)

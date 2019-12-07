@@ -896,17 +896,8 @@ class Terminal extends EventEmitter {
 			}
 		}
 
-
-		this._input = input;
-		this.output = output || (input === process.stdin? process.stdout:null);
-		this._encoding = encoding;
-		this.timeout = timeout;
-		this._timeoutID = undefined;
-
-		this.resume();
-
 		// When the stream closes, clear the string decoder's internal buffer and process any incomplete code points.
-		input.on("end", ()=>{
+		this._endListener = ()=>{
 			if (!sendByte) {
 				let str = stringDecoder.end();
 
@@ -918,20 +909,50 @@ class Terminal extends EventEmitter {
 					}
 				}
 			}
-		})
+		}
+
+
+		this._input = input;
+		this.output = output || (input === process.stdin? process.stdout:null);
+		this._encoding = encoding;
+		this.timeout = timeout;
+		this._timeoutID = undefined;
+
+		this._isPaused = true;
+		this.resume();
 	}
 
 	/**
 	 * Removes the `data` listener from the input stream.
+	 * @param {boolean} pauseStream Determines if the underlying input stream is also paused. This will allow Node.js to exit.
 	 */
-	pause() {
-		this._input.removeListener("data", this._dataListener);
+	pause(pauseStream = true) {
+		if (!this._isPaused) {
+			this._input.removeListener("data", this._dataListener);
+			this._input.removeListener("end", this._endListener);
+			if (pauseStream && this._input.pause)
+				this._input.pause();
+
+			this._isPaused = true;
+			return true;
+		} else
+			return false;
 	}
 	/**
 	 * Attaches the `data` listener to the input stream.
+	 * @param {boolean} resumeStream Determines if the underlying input stream is also resumed.
 	 */
-	resume() {
-		this._input.on("data", this._dataListener);
+	resume(resumeStream = true) {
+		if (this._isPaused) {
+			this._input.on("data", this._dataListener);
+			this._input.on("end", this._endListener);
+			if (resumeStream && this._input.resume)
+				this._input.resume();
+
+			this._isPaused = false;
+			return true;
+		} else
+			return false;
 	}
 
 	/**

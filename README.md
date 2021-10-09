@@ -26,9 +26,9 @@ const term = new (require("tty-events"));
 
 term.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
-		process.exit(0)
+		process.exit(0);
 	}
-	console.log("You pressed %s.", key.toString())
+	console.log("You pressed %s.", key.toString());
 });
 ```
 
@@ -40,7 +40,7 @@ term.on("keypress", (key)=>{
 term.enableMouse();
 
 term.on("mousedown", (ev)=>{
-	console.log("You clicked at (%i, %i) with the button no. %i.", ev.x, ev.y, ev.button)
+	console.log("You clicked at (%i, %i) with the button no. %i.", ev.x, ev.y, ev.button);
 });
 ```
 
@@ -54,7 +54,7 @@ For an highligh tracking example, see [the example highlight tracking script](ht
 term.enableBPM();
 
 term.on("paste", (text)=>{
-	console.log("You pasted %O.", text)
+	console.log("You pasted %O.", text);
 });
 ```
 
@@ -66,10 +66,10 @@ Focus events allow an applicatioin to stop updating the screen when it's not nec
 term.enableFocus();
 
 term.on("focusin", ()=>{
-	console.log("The terminal received focus.")
+	console.log("The terminal received focus.");
 });
 term.on("focusout", ()=>{
-	console.log("The terminal lost focus.")
+	console.log("The terminal lost focus.");
 });
 ```
 
@@ -81,7 +81,7 @@ Because of the way terminals work, there are some aspects that might seem unintu
 
 An uppercase letter emits an event with the uppercase letter and with the `shift` property set to `false`. This is because there is no way to know if <kbd>Shift</kbd> was being pressed (an uppercase letter can be produced with <kbd>Caps Lock</kbd>). For example: <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> emits `Alt+A` instead of `Alt+Shift+a`.
 
-### "Twin" Keys
+### “Twin” Keys
 
 Some key combinations produce the same output to `stdin`. Here is a list of the key combinations that may not work as expected:
 

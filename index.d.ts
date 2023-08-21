@@ -189,7 +189,7 @@ declare module "tty-events" {
 
 
 		/** Event fired when a key (or key combinaion) is pressed. */
-		on(event: "keypress", listener: (key: KeyboardEvent) => void): this;
+		on(event: "keypress", listener: (key: Terminal.KeyboardEvent) => void): this;
 
 
 		/** Event fired when a mouse button is pressed down. */

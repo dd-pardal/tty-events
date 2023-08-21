@@ -35,7 +35,7 @@ print("\x1b[?1049h\x1b[H" + loremIpsum.slice(0, stdout.columns*stdout.rows));
 te.on("keypress", (key)=>{
 	if (key == "Ctrl+c") {
 		cleanup();
-		process.exit();
+		te.pause();
 	}
 })
 

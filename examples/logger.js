@@ -12,7 +12,7 @@ if (process.stdin.isTTY)
 function dataListener(data) {
 	var str = "";
 	for (let i=0; i<data.length; i++)
-		str += data[i].toString(16) + " ";
+		str += data[i].toString(16).padStart(2, "0") + " ";
 
 	console.log("Input bytes: "+str)
 }
@@ -26,7 +26,7 @@ term.on("keypress", (key)=>{
 		term.disableMouse()
 		term.disableBPM()
 		term.disableFocus()
-		process.exit();
+		term.pause();
 	}
 	console.log(key, key.toString())
 })

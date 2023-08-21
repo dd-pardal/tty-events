@@ -1,5 +1,3 @@
-/* This is the test script for tty-events */
-
 const Terminal = require("./index.js"),
 stream = require("stream"),
 assert = require("assert");
@@ -433,7 +431,7 @@ function nok(str, ...args) {
 			super();
 			this.resetReady();
 		}
-	
+
 		resetReady() {
 			this.ready = new Promise((res)=>{this.readyRes = res});
 		}

@@ -126,19 +126,19 @@ class MouseEvent {
  * @type {number?}
  */
 /**
- * Determines if the Ctrl modifier was being pressed when the mouse event occured.
+ * Determines if the Ctrl modifier was being pressed when the mouse event occurred.
  * 
  * @name module:tty-events.MouseEvent#ctrl
  * @type {boolean}
  */
 /**
- * Determines if the Alt modifier was being pressed when the mouse event occured.
+ * Determines if the Alt modifier was being pressed when the mouse event occurred.
  * 
  * @name module:tty-events.MouseEvent#alt
  * @type {boolean}
  */
 /**
- * Determines if the Shift modifier was being pressed when the mouse event occured.
+ * Determines if the Shift modifier was being pressed when the mouse event occurred.
  * 
  * @name module:tty-events.MouseEvent#shift
  * @type {boolean}
@@ -237,7 +237,7 @@ class HighlightEvent {
 */
 
 /**
- * A generator function that accepts characters from the input stream as inputs to `iterator.next()` and emmits the events.
+ * A generator function that accepts characters from the input stream as inputs to `iterator.next()` and emits the events.
  * 
  * @param {module:tty-input} term
  * @private
@@ -250,7 +250,7 @@ function* emitKeys(term) {
 	 * @param {boolean} mouseUp If it is a mouseup event (used by SGR).
 	 */
 	function parseAndEmitMouse(b, x, y, mouseUp = false) {
-		if (b<0 || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y)) // Sometives rxvt sends mouse sequences with negative coordinates.
+		if (b<0 || x<1 || y<1 || isNaN(b) || isNaN(x) || isNaN(y)) // Sometimes, rxvt sends mouse sequences with negative coordinates.
 			return;
 
 		/* Quotes (indicated by "//>") are from <https://invisible-island.net/xterm/ctlseqs/ctlseqs.pdf> */
@@ -337,7 +337,7 @@ function* emitKeys(term) {
 	 * The last character to be read.
 	 */
 	ch = yield,
-	
+
 	/**
 	 * The sequence.
 	 */
@@ -530,7 +530,7 @@ function* emitKeys(term) {
 						// The sequence is broken.
 						term.emit("unknownSequence", s);
 						continue main;
-						
+
 					}
 				}
 
@@ -594,7 +594,7 @@ function* emitKeys(term) {
 
 					} else if (seq === "200~") { // BRACKETED PASTE MODE
 
-						// Loop until a ESC [ 2 0 1 ~ is recieved.
+						// Loop until an ESC [ 2 0 1 ~ is received.
 						const endSeq = "\x1b[201~";
 						let str = "", endSeqIndex = 0;
 						while (true) {
@@ -606,8 +606,8 @@ function* emitKeys(term) {
 								endSeqIndex = 0;
 
 							if (endSeqIndex >= endSeq.length) {
-								// A ESC [ 2 0 1 ~ was received.
-								
+								// An ESC [ 2 0 1 ~ was received.
+
 								term.emit("paste", str.slice(0, str.length - endSeq.length));
 								break;
 							}
@@ -662,7 +662,7 @@ function* emitKeys(term) {
 				// Double-escaped sequences usually mean that the Alt key was being pressed.
 				key.alt = true;
 			}
-		
+
 			// Parse the key code
 			if (code.match(/^(O|\[)[A-Z]$/)) {
 				// ESC O letter and ESC [ letter are equivalent.
@@ -796,7 +796,7 @@ function* emitKeys(term) {
 
 			} else if (ch === ' ') {
 				key.name = 'space';
-				
+
 			} else if (ch <= '\x1e') {
 				// ^@, ^A-Z, ^\, ^], ^^
 				// Note: ^@ can also be obtained using Ctrl+␣ in most terminals.
@@ -832,12 +832,12 @@ function* emitKeys(term) {
 
 /**
  * @typedef TermOptions
- * @property {number} timeout=500 The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
+ * @property {number} timeout=500 The escape sequence timeout, in milliseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout.
  * @property {string} encoding=utf-8 The encoding of the input stream.
  */
 
 /**
- * Represents a terminal that emits events.
+ * Emits terminal-related events.
  * 
  * @alias module:tty-events
  */
@@ -856,12 +856,12 @@ class Terminal extends EventEmitter {
 
 		const stringDecoder = new StringDecoder(encoding),
 		iterator = emitKeys(this);
-	
+
 		/**
 		 * The value returned by `iterator.next()`. (`false`: iterator expects a char; `true`: iterator expects a byte.)
 		 */
 		var sendByte = iterator.next().value
-		
+
 		this._dataListener = (buf) => {
 			for (let i=0; i<buf.length; i++) {
 				if (sendByte)
@@ -879,7 +879,7 @@ class Terminal extends EventEmitter {
 					}
 				}
 			}
-		
+
 			// Escape Timeout
 			//
 			// Because the escape key sends ESC, there's no way to distinguish it form
@@ -887,7 +887,7 @@ class Terminal extends EventEmitter {
 			if (this._timeoutID) {
 				clearTimeout(this._timeoutID)
 			}
-	
+
 			if (this.timeout !== Infinity) {
 				this._timeoutID = setTimeout(()=>{
 					this._timeoutID = undefined;
@@ -924,7 +924,7 @@ class Terminal extends EventEmitter {
 
 	/**
 	 * Removes the `data` listener from the input stream.
-	 * @param {boolean} pauseStream Determines if the underlying input stream is also paused. This will allow Node.js to exit.
+	 * @param {boolean} pauseStream Whether to pause the input stream. This will allow Node.js to exit.
 	 */
 	pause(pauseStream = true) {
 		if (!this._isPaused) {
@@ -961,7 +961,7 @@ class Terminal extends EventEmitter {
 	 * @param {boolean} sgr Whether to try to activate SGR extended mode
 	 */
 	enableMouse(mode = 0, sgr = true) {
-		// If a terminal dosen't support a certain mode, try to enable the most complete one.
+		// If a terminal doesn't support a certain mode, try to enable the most complete one.
 		this.output.write(`\x1b[?1000h`);
 
 		if (mode === 1)
@@ -973,7 +973,7 @@ class Terminal extends EventEmitter {
 			if (mode === 3)
 				this.output.write(`\x1b[?1003h`);
 		}
-		
+
 		if (sgr)
 			this.output.write(`\x1b[?1006h`);
 	}
@@ -1011,7 +1011,7 @@ class Terminal extends EventEmitter {
 	}
 }
 /**
- * Event fired when a key (or key combinaion) is pressed.
+ * Event fired when a key (or key combination) is pressed.
  * 
  * @event module:tty-events#keypress
  * @type {KeyboardEvent}

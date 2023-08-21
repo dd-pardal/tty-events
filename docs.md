@@ -61,7 +61,7 @@
 <a name="exp_module_tty-events--Terminal"></a>
 
 ## Terminal ⏏
-Represents a terminal that emits events.
+Emits terminal-related events.
 
 **Kind**: Exported class  
 <a name="new_module_tty-events--Terminal_new"></a>
@@ -83,7 +83,7 @@ Removes the `data` listener from the input stream.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| pauseStream | <code>boolean</code> | <code>true</code> | Determines if the underlying input stream is also paused. This will allow Node.js to exit. |
+| pauseStream | <code>boolean</code> | <code>true</code> | Whether to pause the input stream. This will allow Node.js to exit. |
 
 <a name="module_tty-events--Terminal+resume"></a>
 
@@ -141,7 +141,7 @@ Disables focus events.
 <a name="module_tty-events--Terminal+event_keypress"></a>
 
 ### "keypress"
-Event fired when a key (or key combinaion) is pressed.
+Event fired when a key (or key combination) is pressed.
 
 **Kind**: event emitted by [<code>Terminal</code>](#exp_module_tty-events--Terminal)  
 <a name="module_tty-events--Terminal+event_mousedown"></a>
@@ -308,19 +308,19 @@ The button number, in the range 1-11. This property might be `undefined` for `mo
 <a name="module_tty-events--Terminal.MouseEvent+ctrl"></a>
 
 #### mouseEvent.ctrl : <code>boolean</code>
-Determines if the Ctrl modifier was being pressed when the mouse event occured.
+Determines if the Ctrl modifier was being pressed when the mouse event occurred.
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.MouseEvent+alt"></a>
 
 #### mouseEvent.alt : <code>boolean</code>
-Determines if the Alt modifier was being pressed when the mouse event occured.
+Determines if the Alt modifier was being pressed when the mouse event occurred.
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.MouseEvent+shift"></a>
 
 #### mouseEvent.shift : <code>boolean</code>
-Determines if the Shift modifier was being pressed when the mouse event occured.
+Determines if the Shift modifier was being pressed when the mouse event occurred.
 
 **Kind**: instance property of [<code>MouseEvent</code>](#module_tty-events--Terminal.MouseEvent)  
 <a name="module_tty-events--Terminal.MouseEvent+type"></a>
@@ -418,6 +418,6 @@ Constant used for `enableMouse()`: All events.
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| timeout | <code>number</code> | <code>500</code> | The escape sequence timeout, in millisseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout. |
+| timeout | <code>number</code> | <code>500</code> | The escape sequence timeout, in milliseconds. `tty-events` will stop waiting for the rest of an escape sequence when the timeout fires. `Infinity` = no timeout. |
 | encoding | <code>string</code> | <code>&quot;utf-8&quot;</code> | The encoding of the input stream. |
 

@@ -1,7 +1,7 @@
 declare module "tty-events" {
     import * as events from "events";
 	import * as stream from "stream";
-	
+
 	namespace Terminal {
 		/** Represents a keyboard event (key or key combination). */
 		class KeyboardEvent {
@@ -156,7 +156,7 @@ declare module "tty-events" {
 
 		/** Event fired when a mouse button is pressed down. */
 		addListener(event: "mousedown", listener: mouseListener): this;
-		
+
 		/** Event fired when a mouse button is released. */
 		addListener(event: "mouseup", listener: mouseListener): this;
 
@@ -217,7 +217,7 @@ declare module "tty-events" {
 		/** Event fired when the terminal window loses focus. */
 		on(event: "focusout", listener: () => void): this;
 
-		
+
 		/** Event fired when text is selected using highlight tracking. */
 		on(event: "highlight", listener: (ev: Terminal.HighlightEvent) => void): this;
 
